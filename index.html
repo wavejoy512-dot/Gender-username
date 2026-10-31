@@ -98,7 +98,6 @@
   @keyframes toastPop{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
   @keyframes toastOut{to{opacity:0;transform:translateY(-20px)}}
   
-  /* Экран отладки (появится, если что-то сломается) */
   #debug-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); color: #ff5555; z-index: 9999; padding: 20px; font-family: monospace; font-size: 12px; overflow-y: auto; white-space: pre-wrap; }
 </style>
 </head>
@@ -106,7 +105,6 @@
 <div id="debug-overlay" onclick="this.style.display='none'"></div>
 
 <script>
-    // Перехватываем все ошибки, чтобы показать их на экране
     window.onerror = function(msg, url, line) {
         const debug = document.getElementById('debug-overlay');
         debug.style.display = 'block';
@@ -133,7 +131,7 @@
 
 <div class="app">
   <div class="topbar">
-    <div class="user-profile" onclick="switchTab('profile')">
+    <div class="user-profile" onclick="switchTab('profile', this)">
       <div class="avatar" id="tgAvatar">?</div>
       <div class="user-name" id="tgName">Загрузка...</div>
     </div>
@@ -238,8 +236,8 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-/* --- ЛОГИКА --- */
-const tg = window.Telegram?.WebApp;
+/* --- ЛОГИКА (Исправлено) --- */
+// Убрана повторная строка const tg - она уже объявлена выше
 const user = tg?.initDataUnsafe?.user;
 
 let myBalance = 5.00;
@@ -247,7 +245,7 @@ let myTotal = 0;
 let myId = user ? user.id : 0;
 let myName = user ? user.first_name : 'Игрок';
 let myPhoto = user ? user.photo_url : null;
-let localInventory = []; // Если база не работает, храним тут
+let localInventory = [];
 
 if (user) {
     document.getElementById('tgName').textContent = myName;
@@ -265,12 +263,11 @@ if (user) {
     }
 }
 
-// Безопасная загрузка профиля
 async function syncUser() {
     if (!supabaseClient || !myId) { updateUI(); return; }
     try {
         let { data, error } = await supabaseClient.from('users').select('*').eq('id', myId).single();
-        if (error && error.code !== 'PGRST116') throw error; // Игнорируем ошибку "не найден"
+        if (error && error.code !== 'PGRST116') throw error; 
         
         if (!data) {
             const { data: newUser } = await supabaseClient.from('users').insert([
@@ -371,7 +368,6 @@ async function generate(){
   let liq = Math.max(1, Math.min(99, Math.round(read*0.75 + 25 - rarity.penalty)));
   let sale = Math.max(0.001, val * liq / 100);
 
-  // Анимация прокрутки
   const t0 = performance.now();
   await new Promise(res => {
     const iv = setInterval(() => {
@@ -396,7 +392,6 @@ async function generate(){
   $('liqBar').style.width = liq + '%';
   statsEl.classList.add('show');
 
-  // Сохраняем в базу (если не выйдет, сохраняем локально)
   const newItem = { username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale };
   
   if (supabaseClient && myId) {
@@ -415,10 +410,9 @@ async function generate(){
   }
   
   updateUI();
-  genBtn.disabled = false; // ВСЕГДА ВКЛЮЧАЕМ КНОПКУ ОБРАТНО
+  genBtn.disabled = false;
 }
 
-/* --- КОЛЛЕКЦИЯ --- */
 async function openCollection() {
     openModal('collectionModal');
     const list = $('invList');
@@ -432,7 +426,6 @@ async function openCollection() {
         } catch(e) {}
     }
     
-    // Добавляем локальные, если база не сработала
     data = [...data, ...localInventory];
     
     if(data.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Пусто</div>'; return; }
@@ -456,7 +449,7 @@ async function sellItem(id, price, idx) {
         localInventory.splice(idx, 1);
     }
     await addBalance(price);
-    openCollection(); // Перерисовываем
+    openCollection();
 }
 
 async function sellAll() {
@@ -471,7 +464,6 @@ async function sellAll() {
         } catch(e){}
     }
     
-    // Продаем локальные
     if(localInventory.length > 0) {
         tot += localInventory.reduce((s,i)=>s+parseFloat(i.price),0);
         localInventory = [];
@@ -484,7 +476,6 @@ async function sellAll() {
     closeModal('collectionModal');
 }
 
-/* --- ТОПЫ --- */
 async function loadLeaderboard() {
     const list = $('leaderboardList');
     if (!supabaseClient) {
@@ -505,7 +496,6 @@ async function loadLeaderboard() {
     } catch(e) {}
 }
 
-/* --- УТИЛИТЫ --- */
 function openModal(id) { $(id).classList.add('open'); }
 function closeModal(id) { $(id).classList.remove('open'); }
 function showToast(text, color) {
