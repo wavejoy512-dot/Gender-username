@@ -16,7 +16,6 @@
   }
   html,body { height:100%; width:100%; overflow:hidden; font-family: 'Manrope', system-ui, sans-serif; background: var(--bg); color:var(--txt); display:flex; flex-direction:column; user-select:none; }
   
-  /* Фоновые свечения */
   .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.3;pointer-events:none;z-index:0;animation: float 10s infinite alternate}
   .orb.a{width:300px;height:300px;background:#2aabee;top:-100px;left:-100px}
   .orb.b{width:250px;height:250px;background:#b06dff;bottom:-50px;right:-50px;animation-delay: -5s}
@@ -27,7 +26,7 @@
   /* ШАПКА */
   .topbar{display:flex; align-items:center; justify-content:space-between; padding:12px 16px; padding-top: calc(12px + env(safe-area-inset-top)); gap:10px;}
   .user-profile{display:flex;align-items:center;gap:10px; cursor:pointer;}
-  .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#2aabee,#b06dff);display:grid;place-items:center;font-weight:900;color:#fff;border:2px solid var(--line);background-size:cover;background-position:center;}
+  .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#2aabee,#b06dff);display:grid;place-items:center;font-weight:900;color:#fff;border:2px solid var(--line);background-size:cover;background-position:center; font-size: 16px;}
   .user-name{font-weight:900;font-size:15px;}
   .top-actions{display:flex;gap:8px;align-items:center}
   .balance{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:14px;font-weight:900;font-size:15px;background:var(--card);border:1px solid var(--line); box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
@@ -43,7 +42,6 @@
   /* ДИСПЛЕЙ */
   .display-wrap{position:relative; height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:20px; overflow:hidden; background:#080d13; border:1px solid #1a2635; box-shadow: inset 0 10px 30px rgba(0,0,0,0.8);}
   
-  /* Бейдж цены над ником */
   .price-float {
     position: absolute; top: 12px; right: 12px;
     background: linear-gradient(180deg, #2a1f0d, #1a1306);
@@ -56,7 +54,6 @@
 
   .display{font-family:ui-monospace,monospace; font-size:clamp(26px,8vw,38px); font-weight:900; color:var(--txt); word-break:break-all; transition:all .3s; z-index: 2;}
   
-  /* Анимации дисплея */
   @keyframes dropIn { 0% { transform: translateY(-100px) scale(0.5); opacity: 0; filter: blur(10px); } 70% { transform: translateY(5px) scale(1.1); opacity: 1; filter: blur(0); } 100% { transform: translateY(0) scale(1); } }
   .display.pop-anim { animation: dropIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
   
@@ -80,7 +77,6 @@
   .stat.read .stat-fill{background:#2aabee; color: #2aabee;}
   .stat.liq .stat-fill{background:#3ddc84; color: #3ddc84;}
 
-  /* Кнопки под генератором */
   .mini-btns{display:flex; gap:10px;}
   .btn-mini{
     flex:1; height:60px; border-radius:16px; border:1px solid var(--line);
@@ -96,7 +92,7 @@
   .lb-item{display:flex; align-items:center; gap:12px; padding:14px; border-radius:18px; background:var(--card); border:1px solid var(--line);}
   .lb-rank{font-size:18px; font-weight:900; width:28px; text-align:center; color:var(--muted);}
   .lb-rank.top1{color:var(--gold); font-size:22px; text-shadow: 0 0 10px rgba(255,215,0,0.5);}
-  .lb-avatar{width:38px; height:38px; border-radius:50%; background:#333; background-size:cover; background-position:center;}
+  .lb-avatar{width:38px; height:38px; border-radius:50%; background:#333; background-size:cover; background-position:center; display:grid; place-items:center; font-weight:900; color:#fff; font-size:16px;}
   .lb-name{flex:1; font-weight:900; font-size:15px;}
   .lb-bal{font-family:ui-monospace,monospace; font-weight:900; color:var(--gold); font-size: 15px;}
 
@@ -141,7 +137,6 @@
   @keyframes toastPop{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
   @keyframes toastOut{to{opacity:0;transform:translateY(-20px)}}
 
-  /* Частицы */
   .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; z-index: 10; }
 </style>
 </head>
@@ -302,19 +297,21 @@
     let myId = user ? user.id : 0;
     let myName = user ? user.first_name : 'Игрок';
     let myPhoto = user ? user.photo_url : null;
-    let localInventory = JSON.parse(localStorage.getItem('geners_inv')) || [];
+    
+    // Локальное хранилище (гарантирует, что юзы не пропадут)
+    let localInventory = JSON.parse(localStorage.getItem('geners_inv_v2')) || [];
 
     if (user) {
         document.getElementById('tgName').textContent = myName;
         document.getElementById('profName').textContent = myName;
         document.getElementById('profId').textContent = 'ID: ' + myId;
+        const initial = myName[0].toUpperCase();
         if (myPhoto) {
             document.getElementById('tgAvatar').style.background = `url(${myPhoto}) center/cover`;
             document.getElementById('tgAvatar').textContent = '';
             document.getElementById('profAvatar').style.background = `url(${myPhoto}) center/cover`;
             document.getElementById('profAvatar').textContent = '';
         } else {
-            const initial = myName[0].toUpperCase();
             document.getElementById('tgAvatar').textContent = initial;
             document.getElementById('profAvatar').textContent = initial;
         }
@@ -347,33 +344,24 @@
         setTimeout(()=>el.remove(), 2300);
     }
 
-    // Анимация набора цены
     function animatePrice(targetPrice) {
         const el = document.getElementById('priceFloat');
         el.classList.add('show');
         let start = 0;
-        const duration = 1000; // 1 сек
+        const duration = 1000; 
         const startTime = performance.now();
 
         function update(currentTime) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            // Ease out cubic
             const easeOut = 1 - Math.pow(1 - progress, 3);
             const current = start + (targetPrice - start) * easeOut;
-            
             el.innerHTML = current.toFixed(2) + ' TON';
-            
-            if (progress < 1) {
-                requestAnimationFrame(update);
-            } else {
-                el.innerHTML = targetPrice.toFixed(2) + ' TON';
-            }
+            if (progress < 1) requestAnimationFrame(update);
         }
         requestAnimationFrame(update);
     }
 
-    // Частицы
     function createParticles(color) {
         const wrap = document.getElementById('displayWrap');
         for (let i = 0; i < 30; i++) {
@@ -381,19 +369,15 @@
             p.className = 'particle';
             p.style.background = color;
             p.style.boxShadow = `0 0 10px ${color}`;
-            p.style.left = '50%';
-            p.style.top = '50%';
-            
+            p.style.left = '50%'; p.style.top = '50%';
             const angle = Math.random() * Math.PI * 2;
             const dist = 50 + Math.random() * 100;
             const tx = Math.cos(angle) * dist;
             const ty = Math.sin(angle) * dist;
-            
             const anim = p.animate([
                 { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
                 { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0)`, opacity: 0 }
             ], { duration: 600 + Math.random()*400, easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)' });
-            
             anim.onfinish = () => p.remove();
             wrap.appendChild(p);
         }
@@ -521,7 +505,6 @@
       document.getElementById('liqBar').style.width = liq + '%';
       statsEl.classList.add('show');
 
-      // Запускаем анимацию цены и частицы
       animatePrice(sale);
       createParticles(rarity.color);
       playSound('win');
@@ -533,22 +516,19 @@
 
       const newItem = { id: 'local_' + Date.now(), username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale };
       
-      let savedInCloud = false;
+      // Сохраняем локально (гарантированно)
+      localInventory.push(newItem);
+      localStorage.setItem('geners_inv_v2', JSON.stringify(localInventory));
+      myTotal++;
+
+      // Сохраняем в облако
       if (supabaseClient && myId) {
           try {
               await supabaseClient.from('usernames').insert([{ 
                   user_id: myId, username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale 
               }]);
-              savedInCloud = true;
-              myTotal++;
               await supabaseClient.from('users').update({ total_generated: myTotal }).eq('id', myId);
           } catch(e) { console.log("DB Save error:", e); }
-      }
-      
-      if (!savedInCloud) {
-          localInventory.push(newItem);
-          localStorage.setItem('geners_inv', JSON.stringify(localInventory));
-          myTotal++;
       }
       
       updateUI();
@@ -562,17 +542,25 @@
         list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>';
         
         let data = [];
+        data = [...localInventory];
+
         if (supabaseClient && myId) {
             try {
                 const res = await supabaseClient.from('usernames').select('*').eq('user_id', myId).order('price', {ascending: false});
-                if (res.data) data = res.data;
+                if (res.data) {
+                    res.data.forEach(dbItem => {
+                        if (!data.find(localItem => localItem.username === dbItem.username)) {
+                            data.push(dbItem);
+                        }
+                    });
+                }
             } catch(e) {}
         }
         
-        data = [...data, ...localInventory];
-        
         if(data.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Пусто</div>'; return; }
         
+        data.sort((a, b) => b.price - a.price);
+
         list.innerHTML = data.map((item, index) => `
             <div class="mc-item" style="border-left-color:${item.rarity_color};">
                 <div style="flex:1;">
@@ -588,7 +576,7 @@
     async function sellItem(id, price) {
         if (id.toString().startsWith('local_')) {
             localInventory = localInventory.filter(i => i.id !== id);
-            localStorage.setItem('geners_inv', JSON.stringify(localInventory));
+            localStorage.setItem('geners_inv_v2', JSON.stringify(localInventory));
         } else if (supabaseClient && myId) {
             try { await supabaseClient.from('usernames').delete().eq('id', id); } catch(e){}
         }
@@ -611,7 +599,7 @@
         if(localInventory.length > 0) {
             tot += localInventory.reduce((s,i)=>s+parseFloat(i.price),0);
             localInventory = [];
-            localStorage.setItem('geners_inv', JSON.stringify([]));
+            localStorage.setItem('geners_inv_v2', JSON.stringify([]));
         }
         
         if(tot > 0) {
@@ -621,37 +609,46 @@
         closeModal('collectionModal');
     }
 
-    // 9. Топы
+    // 9. Топы (ТОЛЬКО РЕАЛЬНЫЕ ИГРОКИ)
     async function loadLeaderboard() {
         const list = document.getElementById('leaderboardList');
-        let data = [];
-        
-        if (supabaseClient) {
-            try {
-                const res = await supabaseClient.from('users').select('*').order('balance', {ascending: false}).limit(50);
-                if (res.data && res.data.length > 0) data = res.data;
-            } catch(e) {}
-        }
-        
-        // Если база пуста или выдает ошибку, показываем фейковых ботов для красоты
-        if (data.length === 0) {
-            data = [
-                { first_name: 'CryptoKing', balance: 1250.5, photo_url: null },
-                { first_name: 'NFT_Master', balance: 840.0, photo_url: null },
-                { first_name: 'Satoshi', balance: 500.2, photo_url: null },
-                { first_name: 'Degen', balance: 120.0, photo_url: null },
-                { first_name: 'Whale', balance: 50.0, photo_url: null }
-            ];
+        list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка топов...</div>';
+
+        if (!supabaseClient) {
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:#ff3b6b; font-weight:800;">Ошибка подключения к базе</div>';
+            return;
         }
 
-        list.innerHTML = data.map((u, i) => `
-            <div class="lb-item">
-                <div class="lb-rank ${i===0?'top1':i===1?'top2':i===2?'top3':''}">${i+1}</div>
-                <div class="lb-avatar" style="${u.photo_url ? `background-image:url(${u.photo_url})` : 'background:linear-gradient(135deg,#2aabee,#b06dff)'}"></div>
-                <div class="lb-name">${u.first_name}</div>
-                <div class="lb-bal">${parseFloat(u.balance).toFixed(1)} TON</div>
-            </div>
-        `).join('');
+        try {
+            const res = await supabaseClient.from('users').select('*').order('balance', {ascending: false}).limit(50);
+            if (res.error) throw res.error;
+            
+            const data = res.data || [];
+            
+            if (data.length === 0) {
+                list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Пока нет игроков.<br>Пригласи друзей!</div>';
+                return;
+            }
+
+            list.innerHTML = data.map((u, i) => {
+                const initial = u.first_name ? u.first_name[0].toUpperCase() : '?';
+                const avatarStyle = u.photo_url 
+                    ? `background-image:url(${u.photo_url})` 
+                    : `background:linear-gradient(135deg,#2aabee,#b06dff)`;
+                    
+                return `
+                <div class="lb-item">
+                    <div class="lb-rank ${i===0?'top1':i===1?'top2':i===2?'top3':''}">${i+1}</div>
+                    <div class="lb-avatar" style="${avatarStyle}">${!u.photo_url ? initial : ''}</div>
+                    <div class="lb-name">${u.first_name}</div>
+                    <div class="lb-bal">${parseFloat(u.balance).toFixed(1)} TON</div>
+                </div>
+                `;
+            }).join('');
+        } catch(e) {
+            console.error("Leaderboard error:", e);
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:#ff3b6b; font-weight:800;">Ошибка загрузки топов</div>';
+        }
     }
 
     // 10. Каталог
@@ -726,7 +723,6 @@
 
     function openWheel() {
         openModal('wheelModal');
-        // Даем модулю времени прогрузиться, чтобы canvas не был 0x0
         setTimeout(() => { drawWheel(); }, 100);
     }
 
