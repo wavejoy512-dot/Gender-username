@@ -4,29 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Geners Username</title>
+<!-- Подключаем красивый шрифт -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800;900&display=swap" rel="stylesheet">
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<!-- ПОДКЛЮЧАЕМ SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   :root {
-    --bg: #06090e; --card: rgba(19,27,38,0.7); --line: rgba(255,255,255,0.08);
+    --bg: #06090e; --card: rgba(19,27,38,0.8); --line: rgba(255,255,255,0.08);
     --txt: #ffffff; --muted: #8b9bad; --accent: #2aabee; --accent2: #7ce0ff;
     --gold: #ffd700; --ton: #0098ea; --nav-bg: rgba(10,15,22,0.95);
   }
   [data-theme="black"] { --bg: #000000; --card: #0a0a0a; --line: rgba(255,255,255,0.05); --txt: #ffffff; --muted: #666666; --nav-bg: rgba(0,0,0,0.95); }
   [data-theme="light"] { --bg: #f0f4f8; --card: #ffffff; --line: rgba(0,0,0,0.1); --txt: #1a202c; --muted: #718096; --nav-bg: rgba(255,255,255,0.95); }
 
-  html,body { height:100%; width:100%; overflow:hidden; font-family:'Inter', system-ui, sans-serif; background: var(--bg); color:var(--txt); display:flex; flex-direction:column; user-select:none; transition: background 0.3s, color 0.3s; }
-  .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.25;pointer-events:none;z-index:0}
+  html,body { 
+    height:100%; width:100%; overflow:hidden; 
+    font-family: 'Manrope', system-ui, sans-serif; /* Новый шрифт */
+    background: var(--bg); color:var(--txt); display:flex; flex-direction:column; user-select:none; transition: background 0.3s, color 0.3s; 
+  }
+  
+  .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.2;pointer-events:none;z-index:0}
   .orb.a{width:300px;height:300px;background:#2aabee;top:-100px;left:-100px}
   .orb.b{width:250px;height:250px;background:#b06dff;bottom:-50px;right:-50px}
+  
   .app{flex:1; display:flex; flex-direction:column; width:100%; max-width:480px; margin:0 auto; position:relative; z-index:1; height:100dvh;}
   
   .topbar{display:flex; align-items:center; justify-content:space-between; padding:12px 16px; padding-top: calc(12px + env(safe-area-inset-top)); gap:10px;}
   .user-profile{display:flex;align-items:center;gap:10px; cursor:pointer;}
   .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2aabee,#b06dff);display:grid;place-items:center;font-weight:900;color:#fff;border:2px solid var(--line);background-size:cover;background-position:center;}
   .user-name{font-weight:800;font-size:14px;}
+  
   .top-actions{display:flex;gap:8px;align-items:center}
   .balance{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:12px;font-weight:900;font-size:14px;background:var(--card);border:1px solid var(--line);}
   .ton-diamond{width:16px;height:16px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#0098ea,#7ce0ff);border-radius:50%;color:#03141f;font-size:10px;font-weight:900;}
@@ -44,7 +55,7 @@
   .rarity-tag{align-self:center; padding:6px 16px; border-radius:20px; font-weight:900; font-size:13px; text-transform:uppercase; opacity:0; transform:translateY(-5px); transition:all .3s;}
   .rarity-tag.show{opacity:1; transform:none;}
   
-  .btn-gen{width:100%; padding:16px; border:none; border-radius:16px; font-size:16px; font-weight:900; color:#03121c; background:linear-gradient(180deg,#7ce0ff,#2aabee); box-shadow:0 6px 0 #0e4a70, 0 10px 20px -5px rgba(42,171,238,0.5); transition:.1s;}
+  .btn-gen{width:100%; padding:16px; border:none; border-radius:16px; font-size:16px; font-weight:900; color:#03121c; background:linear-gradient(180deg,#7ce0ff,#2aabee); box-shadow:0 6px 0 #0e4a70, 0 10px 20px -5px rgba(42,171,238,0.5); transition:.1s; font-family: 'Manrope', sans-serif;}
   .btn-gen:active{transform:translateY(4px); box-shadow:0 2px 0 #0e4a70;}
   .btn-gen:disabled{opacity:0.5; cursor:not-allowed; transform:translateY(4px); box-shadow:0 2px 0 #0e4a70;}
   
@@ -56,7 +67,7 @@
   .lb-rank.top3{color:#cd7f32; font-size:18px;}
   .lb-avatar{width:32px; height:32px; border-radius:50%; background:#333; background-size:cover; background-position:center;}
   .lb-name{flex:1; font-weight:800; font-size:14px;}
-  .lb-bal{font-family:ui-monospace; font-weight:900; color:var(--gold);}
+  .lb-bal{font-family:ui-monospace,monospace; font-weight:900; color:var(--gold);}
 
   .profile-header{display:flex; flex-direction:column; align-items:center; gap:10px; margin:20px 0;}
   .profile-avatar{width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#2aabee,#b06dff); display:grid; place-items:center; font-size:30px; font-weight:900; color:#fff; border:3px solid var(--line); background-size:cover; background-position:center;}
@@ -84,7 +95,7 @@
   .mc-item{flex:0 0 130px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;justify-content:space-between;border-left-width:3px;}
   .mc-name{font-family:monospace;font-size:13px;font-weight:900;word-break:break-all;}
   .mc-sell{background:var(--line);border:none;border-radius:6px;padding:4px 8px;color:var(--txt);font-size:10px;font-weight:900;cursor:pointer;}
-  .btn-sell-all{width:100%;padding:14px;border-radius:14px;border:none;font-weight:900;font-size:14px;color:#04140e;background:linear-gradient(180deg,#5ff2a4,#3ddc84);box-shadow:0 4px 0 #146b3d;}
+  .btn-sell-all{width:100%;padding:14px;border-radius:14px;border:none;font-weight:900;font-size:14px;color:#04140e;background:linear-gradient(180deg,#5ff2a4,#3ddc84);box-shadow:0 4px 0 #146b3d; font-family: 'Manrope', sans-serif;}
   .btn-sell-all:active{transform:translateY(2px);box-shadow:0 2px 0 #146b3d}
   
   .stats{display:flex;flex-direction:column;gap:8px;transition:.3s}
@@ -109,7 +120,15 @@
     const SUPABASE_URL = 'https://ikadpwkwvphslxxskvbl.supabase.co'; 
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYWRwd2t3dnBoc2x4eHNrdmJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0NjQ2MjgsImV4cCI6MjEwOTA0MDYyOH0.koLyEKQyGSb4X5cCuMIpsR4zlp9OnWvfEO5PtTbQel8';
     
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // Проверка: если ключ не вставлен, мы просто скроем ошибку и игра запустится без базы
+    let supabaseClient = null;
+    try {
+        if (!SUPABASE_KEY.includes('ВСТАВЬТЕ')) {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
+    } catch(e) {
+        console.log("Ошибка БД. Работаем в локальном режиме.");
+    }
 </script>
 
 <div class="orb a"></div>
@@ -238,7 +257,7 @@ function toggleTheme() {
     localStorage.setItem('appTheme', next);
 }
 
-let myBalance = 0;
+let myBalance = 5.00;
 let myTotal = 0;
 let myId = user ? user.id : 0;
 let myName = user ? user.first_name : 'Игрок';
@@ -263,23 +282,24 @@ if (user) {
 
 /* --- БАЗА ДАННЫХ (СИНХРОНИЗАЦИЯ) --- */
 async function syncUser() {
-    if (!myId) return;
-    // Ищем пользователя в базе
-    let { data: dbUser, error } = await supabaseClient.from('users').select('*').eq('id', myId).single();
-    
-    if (!dbUser) {
-        // Если нет, создаем нового
-        const { data: newUser } = await supabaseClient.from('users').insert([
-            { id: myId, first_name: myName, photo_url: myPhoto, balance: 5.00, total_generated: 0 }
-        ]).select().single();
-        dbUser = newUser;
-    }
-
-    if (dbUser) {
-        myBalance = parseFloat(dbUser.balance);
-        myTotal = dbUser.total_generated;
+    if (!supabaseClient || !myId) {
         updateUI();
+        return; // Работаем локально, если нет базы
     }
+    try {
+        let { data: dbUser, error } = await supabaseClient.from('users').select('*').eq('id', myId).single();
+        if (!dbUser) {
+            const { data: newUser } = await supabaseClient.from('users').insert([
+                { id: myId, first_name: myName, photo_url: myPhoto, balance: 5.00, total_generated: 0 }
+            ]).select().single();
+            dbUser = newUser;
+        }
+        if (dbUser) {
+            myBalance = parseFloat(dbUser.balance);
+            myTotal = dbUser.total_generated;
+        }
+    } catch(e) { console.log("DB Error"); }
+    updateUI();
 }
 
 function updateUI() {
@@ -291,7 +311,7 @@ function updateUI() {
 async function addBalance(amount) {
     myBalance += amount;
     updateUI();
-    await supabaseClient.from('users').update({ balance: myBalance }).eq('id', myId);
+    if (supabaseClient && myId) await supabaseClient.from('users').update({ balance: myBalance }).eq('id', myId);
 }
 
 /* --- НАВИГАЦИЯ --- */
@@ -300,7 +320,6 @@ function switchTab(tabId, el) {
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('tab-' + tabId).classList.add('active');
     if(el) el.classList.add('active');
-    
     if (tabId === 'tops') loadLeaderboard();
 }
 
@@ -389,24 +408,26 @@ async function generate(){
   $('liqBar').style.width = liq + '%';
   statsEl.style.opacity = 1;
 
-  await supabaseClient.from('usernames').insert([{ 
-      user_id: myId, 
-      username: finalName, 
-      rarity_name: rarity.name, 
-      rarity_color: rarity.color, 
-      price: sale 
-  }]);
-  
-  myTotal++;
-  await supabaseClient.from('users').update({ total_generated: myTotal }).eq('id', myId);
+  if (supabaseClient && myId) {
+      await supabaseClient.from('usernames').insert([{ 
+          user_id: myId, username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale 
+      }]);
+      myTotal++;
+      await supabaseClient.from('users').update({ total_generated: myTotal }).eq('id', myId);
+  }
   updateUI();
-
   genBtn.disabled = false;
 }
 
 /* --- КОЛЛЕКЦИЯ --- */
+let localInventory = [];
 async function loadInventory() {
-    const { data } = await supabaseClient.from('usernames').select('*').eq('user_id', myId).order('price', {ascending: false});
+    let data = localInventory;
+    if (supabaseClient && myId) {
+        const res = await supabaseClient.from('usernames').select('*').eq('user_id', myId).order('price', {ascending: false});
+        if (res.data) data = res.data;
+    }
+    
     const list = $('invList');
     if(!data || data.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px">Пусто</div>'; return; }
     
@@ -423,27 +444,35 @@ async function loadInventory() {
 }
 
 async function sellItem(id, price) {
-    await supabaseClient.from('usernames').delete().eq('id', id);
+    if (supabaseClient && myId) {
+        await supabaseClient.from('usernames').delete().eq('id', id);
+    }
     await addBalance(price);
     loadInventory();
 }
 
 async function sellAll() {
-    const { data } = await supabaseClient.from('usernames').select('*').eq('user_id', myId);
-    if(!data || data.length === 0) return;
-    let tot = data.reduce((s,i)=>s+parseFloat(i.price),0);
-    
-    await supabaseClient.from('usernames').delete().eq('user_id', myId);
-    await addBalance(tot);
+    if (supabaseClient && myId) {
+        const { data } = await supabaseClient.from('usernames').select('*').eq('user_id', myId);
+        if(data && data.length > 0) {
+            let tot = data.reduce((s,i)=>s+parseFloat(i.price),0);
+            await supabaseClient.from('usernames').delete().eq('user_id', myId);
+            await addBalance(tot);
+        }
+    }
     loadInventory();
     closeModal('collectionModal');
 }
 
 /* --- ТОПЫ --- */
 async function loadLeaderboard() {
-    const { data } = await supabaseClient.from('users').select('*').order('balance', {ascending: false}).limit(50);
     const list = $('leaderboardList');
+    if (!supabaseClient) {
+        list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px">База данных не подключена</div>';
+        return;
+    }
     
+    const { data } = await supabaseClient.from('users').select('*').order('balance', {ascending: false}).limit(50);
     if (!data) return;
     
     list.innerHTML = data.map((u, i) => `
@@ -461,8 +490,6 @@ function openModal(id) { $(id).classList.add('open'); }
 function closeModal(id) { $(id).classList.remove('open'); }
 
 genBtn.addEventListener('click', generate);
-
-// СТАРТ
 syncUser();
 </script>
 </body>
