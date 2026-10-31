@@ -9,11 +9,19 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
-  :root { --bg: #06090e; --card: rgba(19,27,38,0.8); --line: rgba(255,255,255,0.08); --txt: #ffffff; --muted: #8b9bad; --accent: #2aabee; --gold: #ffd700; --nav-bg: rgba(10,15,22,0.95); }
+  :root { 
+    --bg: #06090e; --card: #141d29; --line: rgba(255,255,255,0.1); 
+    --txt: #ffffff; --muted: #8b9bad; --accent: #2aabee; --gold: #ffd700; 
+    --nav-bg: rgba(10,15,22,0.95); 
+  }
   html,body { height:100%; width:100%; overflow:hidden; font-family: 'Manrope', system-ui, sans-serif; background: var(--bg); color:var(--txt); display:flex; flex-direction:column; user-select:none; }
-  .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.25;pointer-events:none;z-index:0}
+  
+  /* Свечение на фоне */
+  .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.3;pointer-events:none;z-index:0;animation: float 10s infinite alternate}
   .orb.a{width:300px;height:300px;background:#2aabee;top:-100px;left:-100px}
-  .orb.b{width:250px;height:250px;background:#b06dff;bottom:-50px;right:-50px}
+  .orb.b{width:250px;height:250px;background:#b06dff;bottom:-50px;right:-50px;animation-delay: -5s}
+  @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, 20px); } }
+
   .app{flex:1; display:flex; flex-direction:column; width:100%; max-width:480px; margin:0 auto; position:relative; z-index:1; height:100dvh;}
   
   /* ШАПКА */
@@ -22,7 +30,7 @@
   .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#2aabee,#b06dff);display:grid;place-items:center;font-weight:900;color:#fff;border:2px solid var(--line);background-size:cover;background-position:center;}
   .user-name{font-weight:900;font-size:15px;}
   .top-actions{display:flex;gap:8px;align-items:center}
-  .balance{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:14px;font-weight:900;font-size:15px;background:var(--card);border:1px solid var(--line);}
+  .balance{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:14px;font-weight:900;font-size:15px;background:var(--card);border:1px solid var(--line); box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
   .ton-diamond{width:18px;height:18px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#0098ea,#7ce0ff);border-radius:50%;color:#03141f;font-size:11px;font-weight:900;}
 
   /* КОНТЕНТ */
@@ -30,55 +38,77 @@
   .content.active{display:flex; animation: slideUpFade 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);}
   @keyframes slideUpFade{from{opacity:0; transform:translateY(15px)}to{opacity:1; transform:none}}
 
-  .card{background:var(--card); backdrop-filter:blur(20px); border:1px solid var(--line); border-radius:24px; padding:18px; display:flex; flex-direction:column; gap:14px;}
-  .display-wrap{position:relative; height:140px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:20px; overflow:hidden; background:rgba(0,0,0,0.5); border:1px solid var(--line);}
-  .display{font-family:ui-monospace,monospace; font-size:clamp(26px,8vw,38px); font-weight:900; color:var(--txt); word-break:break-all; transition:all .3s;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:24px; padding:18px; display:flex; flex-direction:column; gap:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);}
+  .display-wrap{position:relative; height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:20px; overflow:hidden; background:#080d13; border:1px solid #1a2635; box-shadow: inset 0 10px 30px rgba(0,0,0,0.8);}
   
-  @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; filter: blur(5px); } 70% { transform: scale(1.05); opacity: 1; filter: blur(0); } 100% { transform: scale(1); } }
-  .display.pop-anim { animation: popIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+  .display{font-family:ui-monospace,monospace; font-size:clamp(26px,8vw,38px); font-weight:900; color:var(--txt); word-break:break-all; transition:all .3s; z-index: 2;}
   
-  .rarity-tag{align-self:center; padding:8px 20px; border-radius:20px; font-weight:900; font-size:14px; text-transform:uppercase; opacity:0; transform:translateY(-10px); transition:all .3s;}
+  /* Анимация падения */
+  @keyframes dropIn { 0% { transform: translateY(-100px) scale(0.5); opacity: 0; filter: blur(10px); } 70% { transform: translateY(5px) scale(1.1); opacity: 1; filter: blur(0); } 100% { transform: translateY(0) scale(1); } }
+  .display.pop-anim { animation: dropIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+  
+  /* Тряска экрана */
+  @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } }
+  .shake-screen { animation: shake 0.5s ease; }
+
+  .rarity-tag{align-self:center; padding:8px 20px; border-radius:20px; font-weight:900; font-size:14px; text-transform:uppercase; opacity:0; transform:translateY(-10px); transition:all .3s; z-index: 2;}
   .rarity-tag.show{opacity:1; transform:translateY(0);}
   
-  .btn-gen{width:100%; padding:18px; border:none; border-radius:18px; font-size:18px; font-weight:900; color:#03121c; background:linear-gradient(180deg,#7ce0ff,#2aabee); box-shadow:0 6px 0 #0e4a70; transition:all .15s; font-family: 'Manrope', sans-serif; position:relative;}
+  .btn-gen{width:100%; padding:18px; border:none; border-radius:18px; font-size:18px; font-weight:900; color:#03121c; background:linear-gradient(180deg,#7ce0ff,#2aabee); box-shadow:0 6px 0 #0e4a70; transition:all .15s; font-family: 'Manrope', sans-serif; position:relative; overflow: hidden;}
+  .btn-gen::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: shine 3s infinite; }
+  @keyframes shine { 0% { left: -100%; } 20% { left: 100%; } 100% { left: 100%; } }
   .btn-gen:active:not(:disabled){transform:translateY(4px); box-shadow:0 2px 0 #0e4a70;}
   .btn-gen:disabled{opacity:0.7; cursor:not-allowed; filter:grayscale(0.5); transform:translateY(4px); box-shadow:0 2px 0 #0e4a70;}
-  
+
   .stats{display:flex;flex-direction:column;gap:10px;transition:all .4s ease; opacity: 0; transform: translateY(10px);}
   .stats.show { opacity: 1; transform: translateY(0); }
   .stat-head{display:flex;justify-content:space-between;font-size:12px;font-weight:900;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
-  .stat-bar{height:8px;border-radius:4px;background:rgba(0,0,0,0.5);overflow:hidden;}
-  .stat-fill{height:100%;width:0;border-radius:4px;transition:width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);}
-  .stat.read .stat-fill{background:#2aabee;}
-  .stat.liq .stat-fill{background:#3ddc84;}
+  .stat-bar{height:8px;border-radius:4px;background:#080d13;overflow:hidden; border: 1px solid #1a2635;}
+  .stat-fill{height:100%;width:0;border-radius:4px;transition:width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 0 10px currentColor;}
+  .stat.read .stat-fill{background:#2aabee; color: #2aabee;}
+  .stat.liq .stat-fill{background:#3ddc84; color: #3ddc84;}
 
+  /* Кнопки под генератором */
+  .mini-btns{display:flex; gap:10px;}
+  .btn-mini{
+    flex:1; height:60px; border-radius:16px; border:1px solid var(--line);
+    background: #141d29; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    font-size: 12px; font-weight: 900; cursor: pointer; transition: all 0.2s;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 10px rgba(0,0,0,0.3);
+  }
+  .btn-mini:active { transform: scale(0.95); background: #1a2635; }
+  .btn-mini span { font-size: 20px; }
+
+  /* Топы */
   .leaderboard{display:flex; flex-direction:column; gap:10px;}
   .lb-item{display:flex; align-items:center; gap:12px; padding:14px; border-radius:18px; background:var(--card); border:1px solid var(--line);}
   .lb-rank{font-size:18px; font-weight:900; width:28px; text-align:center; color:var(--muted);}
-  .lb-rank.top1{color:var(--gold); font-size:22px;}
+  .lb-rank.top1{color:var(--gold); font-size:22px; text-shadow: 0 0 10px rgba(255,215,0,0.5);}
   .lb-avatar{width:38px; height:38px; border-radius:50%; background:#333; background-size:cover; background-position:center;}
   .lb-name{flex:1; font-weight:900; font-size:15px;}
   .lb-bal{font-family:ui-monospace,monospace; font-weight:900; color:var(--gold); font-size: 15px;}
 
+  /* Профиль */
   .profile-header{display:flex; flex-direction:column; align-items:center; gap:12px; margin:20px 0;}
-  .profile-avatar{width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,#2aabee,#b06dff); display:grid; place-items:center; font-size:36px; font-weight:900; color:#fff; border:4px solid var(--card); background-size:cover; background-position:center;}
+  .profile-avatar{width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,#2aabee,#b06dff); display:grid; place-items:center; font-size:36px; font-weight:900; color:#fff; border:4px solid var(--card); background-size:cover; background-position:center; box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
   .profile-name{font-size:24px; font-weight:900;}
   .profile-id{font-size:13px; color:var(--muted); font-family:monospace; font-weight: 600;}
   .profile-stats{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
   .p-stat{background:var(--card); border:1px solid var(--line); padding:18px; border-radius:20px; text-align:center;}
-  .p-stat .val{font-size:20px; font-weight:900; color:var(--gold);}
+  .p-stat .val{font-size:20px; font-weight:900; color:var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.3);}
   .p-stat .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; font-weight:900; margin-top:6px;}
 
-  .bottom-nav{display:flex; justify-content:space-around; align-items:center; padding:12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); background:var(--nav-bg); backdrop-filter:blur(20px); border-top:1px solid var(--line);}
-  .nav-item{display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--muted); font-size:12px; font-weight:900; cursor:pointer; transition:.2s; padding: 5px 15px; border-radius: 12px;}
-  .nav-item.active{color:var(--accent); transform:translateY(-4px); background: rgba(42,171,238,0.1);}
-  .nav-item .icon{font-size:22px;}
+  /* Нижнее меню */
+  .bottom-nav{display:flex; justify-content:space-around; align-items:center; padding:12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); background:var(--nav-bg); border-top:1px solid var(--line);}
+  .nav-item{display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--muted); font-size:12px; font-weight:900; cursor:pointer; transition:.3s; padding: 6px 16px; border-radius: 14px;}
+  .nav-item.active{color:var(--accent); background: rgba(42,171,238,0.1); transform: translateY(-2px); box-shadow: 0 0 15px rgba(42,171,238,0.2);}
+  .nav-item .icon{font-size:22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));}
 
-  /* МОДАЛКИ */
+  /* Модалки */
   .modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .3s}
   .modal.open{opacity:1;pointer-events:auto}
-  .modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px)}
-  .modal-card{position:relative;z-index:1;width:100%;max-width:400px;max-height:85vh;display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--line);border-radius:28px;overflow:hidden;transform:scale(.8);transition:transform .3s;}
+  .modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px)}
+  .modal-card{position:relative;z-index:1;width:100%;max-width:400px;max-height:85vh;display:flex;flex-direction:column;background:#0f151e;border:1px solid var(--line);border-radius:28px;overflow:hidden;transform:scale(.85);transition:transform .3s;}
   .modal.open .modal-card{transform:scale(1)}
   .modal-header{display:flex;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line);}
   .modal-header h2{font-size:16px;font-weight:900;text-transform:uppercase;}
@@ -87,11 +117,11 @@
   
   .mc-item{display:flex; align-items:center; justify-content:space-between; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px; border-left-width:4px;}
   .mc-name{font-family:monospace;font-size:15px;font-weight:900;word-break:break-all;}
-  .mc-sell{background:var(--line); border:none; border-radius:10px; padding:8px 12px; color:var(--txt); font-size:14px; font-weight:900; cursor:pointer;}
+  .mc-sell{background:#1a2635; border:none; border-radius:10px; padding:8px 12px; color:var(--txt); font-size:14px; font-weight:900; cursor:pointer; transition: 0.2s;}
+  .mc-sell:active{background: var(--accent); color: #03121c;}
   .btn-sell-all{width:100%;padding:16px;border-radius:16px;border:none;font-weight:900;font-size:16px;color:#04140e;background:linear-gradient(180deg,#5ff2a4,#3ddc84);box-shadow:0 5px 0 #146b3d; font-family: 'Manrope', sans-serif;}
   .btn-sell-all:active{transform:translateY(3px);box-shadow:0 2px 0 #146b3d}
 
-  /* Каталог */
   .cat-item{display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:14px; background:var(--card); border:1px solid var(--line); border-left-width:4px;}
   
   .toast-wrap{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:200;pointer-events:none}
@@ -138,10 +168,10 @@
       <button class="btn-gen" id="genBtn">⚡ СГЕНЕРИРОВАТЬ</button>
     </div>
     
-    <div style="display:flex; gap:10px;">
-      <button class="btn-icon" style="flex:1; height:54px; font-size:13px; font-weight:900; flex-direction: column; gap:4px;" onclick="openWheel()"><span style="font-size:18px">🎡</span> Колесо</button>
-      <button class="btn-icon" style="flex:1; height:54px; font-size:13px; font-weight:900; flex-direction: column; gap:4px;" onclick="openCollection()"><span style="font-size:18px">💼</span> Коллекция</button>
-      <button class="btn-icon" style="flex:1; height:54px; font-size:13px; font-weight:900; flex-direction: column; gap:4px;" onclick="openModal('catalogModal')"><span style="font-size:18px">📖</span> Каталог</button>
+    <div class="mini-btns">
+      <button class="btn-mini" onclick="openWheel()"><span>🎡</span> Колесо</button>
+      <button class="btn-mini" onclick="openCollection()"><span>💼</span> Коллекция</button>
+      <button class="btn-mini" onclick="openModal('catalogModal')"><span>📖</span> Каталог</button>
     </div>
   </div>
 
@@ -205,7 +235,6 @@
         <canvas id="wheelCanvas" width="500" height="500" style="width:100%;height:100%;border-radius:50%;transition:transform 4s cubic-bezier(0.2, 0.8, 0.2, 1);"></canvas>
       </div>
       <button class="btn-gen" id="spinBtn" style="width:90%; margin-top:15px;">КРУТИТЬ</button>
-      <div id="cooldownTimer" style="margin-top:12px; font-size:12px; color:var(--muted); font-weight:900; text-align:center;"></div>
     </div>
   </div>
 </div>
@@ -218,7 +247,31 @@
     if (tg) { tg.expand(); tg.setHeaderColor('#06090e'); tg.setBackgroundColor('#06090e'); }
     const user = tg?.initDataUnsafe?.user;
 
-    // 2. База Данных
+    // 2. Звуки (Web Audio API)
+    let audioCtx;
+    function playSound(type) {
+        try {
+            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            
+            if(type === 'roll') {
+                osc.type = 'square'; osc.frequency.setValueAtTime(400 + Math.random()*200, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'win') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            }
+        } catch(e) {}
+    }
+
+    // 3. База Данных
     let supabaseClient = null;
     try {
         if (typeof supabase !== 'undefined') {
@@ -229,14 +282,12 @@
         }
     } catch(e) { console.log("Ошибка подключения:", e); }
 
-    // 3. Переменные и Локальное хранилище (на случай ошибки БД)
+    // 4. Переменные
     let myBalance = 5.00;
     let myTotal = 0;
     let myId = user ? user.id : 0;
     let myName = user ? user.first_name : 'Игрок';
     let myPhoto = user ? user.photo_url : null;
-    
-    // Загружаем локальные юзы из памяти телефона
     let localInventory = JSON.parse(localStorage.getItem('geners_inv')) || [];
 
     if (user) {
@@ -255,7 +306,7 @@
         }
     }
 
-    // 4. Функции UI
+    // 5. UI Функции
     function updateUI() {
         document.getElementById('balance').textContent = parseFloat(myBalance).toFixed(2);
         document.getElementById('profBalance').textContent = parseFloat(myBalance).toFixed(2) + ' TON';
@@ -282,7 +333,21 @@
         setTimeout(()=>el.remove(), 2300);
     }
 
-    // 5. Синхронизация с БД
+    // Анимация набора цены (Слот-машина)
+    function animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = (progress * (end - start) + start).toFixed(2) + ' TON';
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    // 6. Синхронизация
     async function syncUser() {
         if (!supabaseClient || !myId) { updateUI(); return; }
         try {
@@ -311,7 +376,7 @@
         }
     }
 
-    // 6. Генерация
+    // 7. Генерация
     const RARITIES = [
       {id:'common', name:'Обычный', color:'#8b95a5', weight:6000, base:0.05, maxBase:0.15, penalty:0},
       {id:'uncommon', name:'Необычный', color:'#3ddc84', weight:2500, base:0.25, maxBase:0.8, penalty:4},
@@ -374,17 +439,23 @@
       let liq = Math.max(1, Math.min(99, Math.round(read*0.75 + 25 - rarity.penalty)));
       let sale = Math.max(0.001, val * liq / 100);
 
+      // Анимация прокрутки
       const t0 = performance.now();
       await new Promise(res => {
         const iv = setInterval(() => {
-          if (performance.now() - t0 > 600){ clearInterval(iv); res(); }
-          else displayEl.textContent = '@' + randomName();
-        }, 40);
+          if (performance.now() - t0 > 600){ 
+              clearInterval(iv); res(); 
+          } else {
+              displayEl.textContent = '@' + randomName();
+              playSound('roll'); // Звук тика
+          }
+        }, 45);
       });
 
+      // Результат
       displayEl.textContent = '@' + finalName;
       displayEl.style.color = rarity.color;
-      displayEl.style.textShadow = `0 0 20px ${rarity.color}`;
+      displayEl.style.textShadow = `0 0 25px ${rarity.color}`;
       displayEl.classList.add('pop-anim');
       
       rarityTag.textContent = rarity.name;
@@ -398,9 +469,15 @@
       document.getElementById('liqBar').style.width = liq + '%';
       statsEl.classList.add('show');
 
+      // Звук победы и тряска
+      playSound('win');
+      if(rarity.id === 'mythic' || rarity.id === 'crystal' || rarity.id === 'divine' || rarity.id === 'absolute' || rarity.id === 'anon') {
+          document.body.classList.add('shake-screen');
+          setTimeout(()=>document.body.classList.remove('shake-screen'), 500);
+      }
+
       const newItem = { id: 'local_' + Date.now(), username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale };
       
-      // Пытаемся сохранить в облако
       let savedInCloud = false;
       if (supabaseClient && myId) {
           try {
@@ -413,7 +490,6 @@
           } catch(e) { console.log("DB Save error:", e); }
       }
       
-      // Если облако не сработало - сохраняем в память телефона
       if (!savedInCloud) {
           localInventory.push(newItem);
           localStorage.setItem('geners_inv', JSON.stringify(localInventory));
@@ -424,14 +500,13 @@
       genBtn.disabled = false;
     }
 
-    // 7. Коллекция
+    // 8. Коллекция
     async function openCollection() {
         openModal('collectionModal');
         const list = document.getElementById('invList');
         list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>';
         
         let data = [];
-        // Грузим из облака
         if (supabaseClient && myId) {
             try {
                 const res = await supabaseClient.from('usernames').select('*').eq('user_id', myId).order('price', {ascending: false});
@@ -439,7 +514,6 @@
             } catch(e) {}
         }
         
-        // Подмешиваем локальные (из памяти)
         data = [...data, ...localInventory];
         
         if(data.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Пусто</div>'; return; }
@@ -458,11 +532,9 @@
 
     async function sellItem(id, price) {
         if (id.toString().startsWith('local_')) {
-            // Продаем локальный
             localInventory = localInventory.filter(i => i.id !== id);
             localStorage.setItem('geners_inv', JSON.stringify(localInventory));
         } else if (supabaseClient && myId) {
-            // Продаем облачный
             try { await supabaseClient.from('usernames').delete().eq('id', id); } catch(e){}
         }
         await addBalance(price);
@@ -494,7 +566,7 @@
         closeModal('collectionModal');
     }
 
-    // 8. Топы
+    // 9. Топы
     async function loadLeaderboard() {
         const list = document.getElementById('leaderboardList');
         if (!supabaseClient) {
@@ -515,12 +587,10 @@
                     <div class="lb-bal">${parseFloat(u.balance).toFixed(1)} TON</div>
                 </div>
             `).join('');
-        } catch(e) {
-            list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Ошибка загрузки топов</div>';
-        }
+        } catch(e) {}
     }
 
-    // 9. Каталог
+    // 10. Каталог
     function renderCatalog() {
         document.getElementById('catalogBody').innerHTML = RARITIES.map(r => `
             <div class="cat-item" style="border-left-color:${r.color}">
@@ -531,7 +601,7 @@
     }
     renderCatalog();
 
-    // 10. Колесо
+    // 11. Колесо
     const WHEEL_PRIZES = [
       { label: '10 TON', type: 'ton', value: 10, color: '#3b9eff' },
       { label: 'x2 BOOST', type: 'mult', value: 2, color: '#ff3b6b' },
@@ -602,12 +672,21 @@
         btn.disabled = true;
         btn.textContent = 'КРУТИТСЯ...';
 
+        // Звук кручения
+        let tickCount = 0;
+        const tickInterval = setInterval(() => {
+            playSound('roll');
+            tickCount++;
+            if (tickCount > 30) clearInterval(tickInterval);
+        }, 100);
+
         const spins = 5 + Math.floor(Math.random() * 5);
         const randomDeg = Math.floor(Math.random() * 360);
         currentRotation += (spins * 360) + randomDeg;
         canvas.style.transform = `rotate(${currentRotation}deg)`;
 
         setTimeout(async () => {
+            clearInterval(tickInterval);
             isSpinning = false;
             btn.disabled = false;
             btn.textContent = 'КРУТИТЬ';
@@ -618,6 +697,7 @@
             if (index < 0) index += WHEEL_PRIZES.length;
             const prize = WHEEL_PRIZES[index];
 
+            playSound('win');
             if (prize.type === 'ton') {
                 await addBalance(prize.value);
                 showToast(`Выигрыш: ${prize.value} TON!`, '#ffcf4d');
