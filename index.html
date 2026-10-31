@@ -4,15 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Geners Username</title>
-<!-- Подключаем красивый шрифт -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800;900&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;800;900&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
   :root {
     --bg: #06090e; --card: rgba(19,27,38,0.8); --line: rgba(255,255,255,0.08);
     --txt: #ffffff; --muted: #8b9bad; --accent: #2aabee; --accent2: #7ce0ff;
@@ -23,92 +21,118 @@
 
   html,body { 
     height:100%; width:100%; overflow:hidden; 
-    font-family: 'Manrope', system-ui, sans-serif; /* Новый шрифт */
+    font-family: 'Manrope', system-ui, sans-serif;
     background: var(--bg); color:var(--txt); display:flex; flex-direction:column; user-select:none; transition: background 0.3s, color 0.3s; 
   }
   
-  .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.2;pointer-events:none;z-index:0}
-  .orb.a{width:300px;height:300px;background:#2aabee;top:-100px;left:-100px}
-  .orb.b{width:250px;height:250px;background:#b06dff;bottom:-50px;right:-50px}
-  
+  .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.25;pointer-events:none;z-index:0;transition:all 1s ease}
+  .orb.a{width:300px;height:300px;background:#2aabee;top:-100px;left:-100px;animation: floatOrb 8s infinite alternate}
+  .orb.b{width:250px;height:250px;background:#b06dff;bottom:-50px;right:-50px;animation: floatOrb 10s infinite alternate-reverse}
+  @keyframes floatOrb { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 30px); } }
+
   .app{flex:1; display:flex; flex-direction:column; width:100%; max-width:480px; margin:0 auto; position:relative; z-index:1; height:100dvh;}
   
+  /* ШАПКА */
   .topbar{display:flex; align-items:center; justify-content:space-between; padding:12px 16px; padding-top: calc(12px + env(safe-area-inset-top)); gap:10px;}
-  .user-profile{display:flex;align-items:center;gap:10px; cursor:pointer;}
-  .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#2aabee,#b06dff);display:grid;place-items:center;font-weight:900;color:#fff;border:2px solid var(--line);background-size:cover;background-position:center;}
-  .user-name{font-weight:800;font-size:14px;}
+  .user-profile{display:flex;align-items:center;gap:10px; cursor:pointer; transition: transform 0.2s;}
+  .user-profile:active{transform: scale(0.95);}
+  .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#2aabee,#b06dff);display:grid;place-items:center;font-weight:900;color:#fff;border:2px solid var(--line);background-size:cover;background-position:center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
+  .user-name{font-weight:900;font-size:15px;}
   
   .top-actions{display:flex;gap:8px;align-items:center}
-  .balance{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:12px;font-weight:900;font-size:14px;background:var(--card);border:1px solid var(--line);}
-  .ton-diamond{width:16px;height:16px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#0098ea,#7ce0ff);border-radius:50%;color:#03141f;font-size:10px;font-weight:900;}
-  .btn-icon{width:36px;height:36px;border-radius:12px;cursor:pointer;font-size:16px;background:var(--card);border:1px solid var(--line);color:var(--txt);display:grid;place-items:center;}
+  .balance{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:14px;font-weight:900;font-size:15px;background:var(--card);border:1px solid var(--line); box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);}
+  .ton-diamond{width:18px;height:18px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#0098ea,#7ce0ff);border-radius:50%;color:#03141f;font-size:11px;font-weight:900; box-shadow: 0 0 8px rgba(0,152,234,0.6);}
+  .btn-icon{width:38px;height:38px;border-radius:12px;cursor:pointer;font-size:16px;background:var(--card);border:1px solid var(--line);color:var(--txt);display:grid;place-items:center; transition: all 0.15s;}
+  .btn-icon:active{transform: scale(0.9); background: var(--line);}
 
+  /* КОНТЕНТ */
   .content{flex:1; overflow-y:auto; padding: 0 16px 20px; display:none; flex-direction:column; gap:16px;}
-  .content.active{display:flex; animation: fadeIn 0.3s ease;}
-  @keyframes fadeIn{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+  .content.active{display:flex; animation: slideUpFade 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);}
+  @keyframes slideUpFade{from{opacity:0; transform:translateY(15px)}to{opacity:1; transform:none}}
 
-  .card{background:var(--card); backdrop-filter:blur(20px); border:1px solid var(--line); border-radius:24px; padding:16px; display:flex; flex-direction:column; gap:14px;}
-  .display-wrap{position:relative; height:140px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:16px; overflow:hidden; background:rgba(0,0,0,0.4); border:1px solid var(--line);}
-  [data-theme="light"] .display-wrap { background: #f8fafc; }
+  /* ГЕНЕРАТОР */
+  .card{background:var(--card); backdrop-filter:blur(20px); border:1px solid var(--line); border-radius:24px; padding:18px; display:flex; flex-direction:column; gap:14px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);}
+  .display-wrap{position:relative; height:140px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:20px; overflow:hidden; background:rgba(0,0,0,0.5); border:1px solid var(--line); box-shadow: inset 0 5px 20px rgba(0,0,0,0.5);}
+  [data-theme="light"] .display-wrap { background: #f8fafc; box-shadow: inset 0 5px 20px rgba(0,0,0,0.05); }
   
-  .display{font-family:ui-monospace,monospace; font-size:clamp(24px,7vw,36px); font-weight:900; color:var(--txt); word-break:break-all; transition:color .3s;}
-  .rarity-tag{align-self:center; padding:6px 16px; border-radius:20px; font-weight:900; font-size:13px; text-transform:uppercase; opacity:0; transform:translateY(-5px); transition:all .3s;}
-  .rarity-tag.show{opacity:1; transform:none;}
+  .display{font-family:ui-monospace,monospace; font-size:clamp(26px,8vw,38px); font-weight:900; color:var(--txt); word-break:break-all; transition:all .3s cubic-bezier(0.2, 0.8, 0.2, 1);}
   
-  .btn-gen{width:100%; padding:16px; border:none; border-radius:16px; font-size:16px; font-weight:900; color:#03121c; background:linear-gradient(180deg,#7ce0ff,#2aabee); box-shadow:0 6px 0 #0e4a70, 0 10px 20px -5px rgba(42,171,238,0.5); transition:.1s; font-family: 'Manrope', sans-serif;}
-  .btn-gen:active{transform:translateY(4px); box-shadow:0 2px 0 #0e4a70;}
-  .btn-gen:disabled{opacity:0.5; cursor:not-allowed; transform:translateY(4px); box-shadow:0 2px 0 #0e4a70;}
+  @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; filter: blur(5px); } 70% { transform: scale(1.05); opacity: 1; filter: blur(0); } 100% { transform: scale(1); } }
+  .display.pop-anim { animation: popIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
   
-  .leaderboard{display:flex; flex-direction:column; gap:8px;}
-  .lb-item{display:flex; align-items:center; gap:12px; padding:12px; border-radius:16px; background:var(--card); border:1px solid var(--line);}
-  .lb-rank{font-size:16px; font-weight:900; width:24px; text-align:center; color:var(--muted);}
-  .lb-rank.top1{color:var(--gold); font-size:20px;}
-  .lb-rank.top2{color:#c0c0c0; font-size:18px;}
-  .lb-rank.top3{color:#cd7f32; font-size:18px;}
-  .lb-avatar{width:32px; height:32px; border-radius:50%; background:#333; background-size:cover; background-position:center;}
-  .lb-name{flex:1; font-weight:800; font-size:14px;}
-  .lb-bal{font-family:ui-monospace,monospace; font-weight:900; color:var(--gold);}
+  .rarity-tag{align-self:center; padding:8px 20px; border-radius:20px; font-weight:900; font-size:14px; text-transform:uppercase; opacity:0; transform:translateY(-10px); transition:all .3s;}
+  .rarity-tag.show{opacity:1; transform:translateY(0);}
+  
+  .btn-gen{width:100%; padding:18px; border:none; border-radius:18px; font-size:18px; font-weight:900; color:#03121c; background:linear-gradient(180deg,#7ce0ff,#2aabee); box-shadow:0 6px 0 #0e4a70, 0 10px 20px -5px rgba(42,171,238,0.5); transition:all .15s; font-family: 'Manrope', sans-serif; position:relative; overflow:hidden;}
+  .btn-gen::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); animation: shine 3s infinite; }
+  @keyframes shine { 0% { left: -100%; } 20% { left: 100%; } 100% { left: 100%; } }
+  .btn-gen:active:not(:disabled){transform:translateY(4px); box-shadow:0 2px 0 #0e4a70, 0 5px 10px -5px rgba(42,171,238,0.5);}
+  .btn-gen:disabled{opacity:0.7; cursor:not-allowed; filter:grayscale(0.5); transform:translateY(4px); box-shadow:0 2px 0 #0e4a70;}
+  
+  /* СТАТЫ */
+  .stats{display:flex;flex-direction:column;gap:10px;transition:all .4s ease; opacity: 0; transform: translateY(10px);}
+  .stats.show { opacity: 1; transform: translateY(0); }
+  .stat-head{display:flex;justify-content:space-between;font-size:12px;font-weight:900;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+  .stat-bar{height:8px;border-radius:4px;background:rgba(0,0,0,0.5);overflow:hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);}
+  .stat-fill{height:100%;width:0;border-radius:4px;transition:width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 0 10px currentColor;}
+  .stat.read .stat-fill{background:#2aabee; color: #2aabee;}
+  .stat.liq .stat-fill{background:#3ddc84; color: #3ddc84;}
 
-  .profile-header{display:flex; flex-direction:column; align-items:center; gap:10px; margin:20px 0;}
-  .profile-avatar{width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#2aabee,#b06dff); display:grid; place-items:center; font-size:30px; font-weight:900; color:#fff; border:3px solid var(--line); background-size:cover; background-position:center;}
-  .profile-name{font-size:20px; font-weight:900;}
-  .profile-id{font-size:12px; color:var(--muted); font-family:monospace;}
-  .profile-stats{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-  .p-stat{background:var(--card); border:1px solid var(--line); padding:14px; border-radius:16px; text-align:center;}
-  .p-stat .val{font-size:18px; font-weight:900; color:var(--gold);}
-  .p-stat .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; font-weight:800; margin-top:4px;}
+  /* ТОПЫ */
+  .leaderboard{display:flex; flex-direction:column; gap:10px;}
+  .lb-item{display:flex; align-items:center; gap:12px; padding:14px; border-radius:18px; background:var(--card); border:1px solid var(--line); animation: slideInLeft 0.4s backwards;}
+  @keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+  .lb-rank{font-size:18px; font-weight:900; width:28px; text-align:center; color:var(--muted);}
+  .lb-rank.top1{color:var(--gold); font-size:22px; text-shadow: 0 0 10px rgba(255,215,0,0.5);}
+  .lb-rank.top2{color:#c0c0c0; font-size:20px;}
+  .lb-rank.top3{color:#cd7f32; font-size:20px;}
+  .lb-avatar{width:38px; height:38px; border-radius:50%; background:#333; background-size:cover; background-position:center; border: 2px solid var(--line);}
+  .lb-name{flex:1; font-weight:900; font-size:15px;}
+  .lb-bal{font-family:ui-monospace,monospace; font-weight:900; color:var(--gold); font-size: 15px;}
 
-  .bottom-nav{display:flex; justify-content:space-around; align-items:center; padding:10px 16px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); background:var(--nav-bg); backdrop-filter:blur(20px); border-top:1px solid var(--line);}
-  .nav-item{display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--muted); font-size:11px; font-weight:800; cursor:pointer; transition:.2s;}
-  .nav-item.active{color:var(--accent); transform:translateY(-2px);}
-  .nav-item .icon{font-size:20px;}
+  /* ПРОФИЛЬ */
+  .profile-header{display:flex; flex-direction:column; align-items:center; gap:12px; margin:20px 0;}
+  .profile-avatar{width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,#2aabee,#b06dff); display:grid; place-items:center; font-size:36px; font-weight:900; color:#fff; border:4px solid var(--card); background-size:cover; background-position:center; box-shadow: 0 10px 30px rgba(42,171,238,0.3);}
+  .profile-name{font-size:24px; font-weight:900;}
+  .profile-id{font-size:13px; color:var(--muted); font-family:monospace; font-weight: 600;}
+  .profile-stats{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .p-stat{background:var(--card); border:1px solid var(--line); padding:18px; border-radius:20px; text-align:center; transition: transform 0.2s;}
+  .p-stat:active{transform: scale(0.95);}
+  .p-stat .val{font-size:20px; font-weight:900; color:var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.3);}
+  .p-stat .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; font-weight:900; margin-top:6px; letter-spacing: 0.5px;}
 
+  /* НАВИГАЦИЯ */
+  .bottom-nav{display:flex; justify-content:space-around; align-items:center; padding:12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); background:var(--nav-bg); backdrop-filter:blur(20px); border-top:1px solid var(--line);}
+  .nav-item{display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--muted); font-size:12px; font-weight:900; cursor:pointer; transition:.2s; padding: 5px 15px; border-radius: 12px;}
+  .nav-item.active{color:var(--accent); transform:translateY(-4px); background: rgba(42,171,238,0.1);}
+  .nav-item:active { transform: scale(0.9); }
+  .nav-item .icon{font-size:22px; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));}
+
+  /* МОДАЛКИ */
   .modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .3s}
   .modal.open{opacity:1;pointer-events:auto}
-  .modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px)}
-  .modal-card{position:relative;z-index:1;width:100%;max-width:400px;max-height:85vh;display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--line);border-radius:24px;overflow:hidden;transform:scale(.9);transition:transform .3s;}
-  .modal.open .modal-card{transform:scale(1)}
-  .modal-header{display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);}
-  .modal-header h2{font-size:15px;font-weight:900;text-transform:uppercase;}
-  .modal-close{margin-left:auto;width:32px;height:32px;border-radius:10px;background:var(--card);color:var(--txt);display:grid;place-items:center;cursor:pointer;border:1px solid var(--line);}
+  .modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px)}
+  .modal-card{position:relative;z-index:1;width:100%;max-width:400px;max-height:85vh;display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--line);border-radius:28px;overflow:hidden;transform:scale(.8) translateY(20px);transition:transform .4s cubic-bezier(0.2, 0.9, 0.3, 1.1);}
+  .modal.open .modal-card{transform:scale(1) translateY(0)}
+  .modal-header{display:flex;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line);}
+  .modal-header h2{font-size:16px;font-weight:900;text-transform:uppercase;}
+  .modal-close{margin-left:auto;width:34px;height:34px;border-radius:12px;background:var(--card);color:var(--txt);display:grid;place-items:center;cursor:pointer;border:1px solid var(--line); font-weight: 900; transition: 0.2s;}
+  .modal-close:active{transform: scale(0.9); background: var(--line);}
   .modal-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px}
-  .mc-item{flex:0 0 130px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;justify-content:space-between;border-left-width:3px;}
-  .mc-name{font-family:monospace;font-size:13px;font-weight:900;word-break:break-all;}
-  .mc-sell{background:var(--line);border:none;border-radius:6px;padding:4px 8px;color:var(--txt);font-size:10px;font-weight:900;cursor:pointer;}
-  .btn-sell-all{width:100%;padding:14px;border-radius:14px;border:none;font-weight:900;font-size:14px;color:#04140e;background:linear-gradient(180deg,#5ff2a4,#3ddc84);box-shadow:0 4px 0 #146b3d; font-family: 'Manrope', sans-serif;}
-  .btn-sell-all:active{transform:translateY(2px);box-shadow:0 2px 0 #146b3d}
   
-  .stats{display:flex;flex-direction:column;gap:8px;transition:.3s}
-  .stat-head{display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
-  .stat-bar{height:6px;border-radius:4px;background:var(--line);overflow:hidden}
-  .stat-fill{height:100%;width:0;border-radius:4px;transition:width .6s ease}
-  .stat.read .stat-fill{background:#2aabee}
-  .stat.liq .stat-fill{background:#3ddc84}
+  .mc-item{display:flex; align-items:center; justify-content:space-between; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px; border-left-width:4px; animation: slideInRight 0.3s backwards;}
+  @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+  .mc-name{font-family:monospace;font-size:15px;font-weight:900;word-break:break-all;}
+  .mc-sell{background:var(--line); border:none; border-radius:10px; padding:8px 12px; color:var(--txt); font-size:14px; font-weight:900; cursor:pointer; transition: 0.2s;}
+  .mc-sell:active{transform: scale(0.9); background: var(--accent); color: #03121c;}
   
-  .toast-wrap{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:200;pointer-events:none}
-  .toast{padding:12px 20px;border-radius:14px;background:var(--card);backdrop-filter:blur(10px);border:1px solid var(--line);font-size:13px;font-weight:900;text-align:center;animation:toastIn .3s, toastOut .3s 2s forwards;}
-  @keyframes toastIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-  @keyframes toastOut{to{opacity:0;transform:translateY(-20px)}}
+  .btn-sell-all{width:100%;padding:16px;border-radius:16px;border:none;font-weight:900;font-size:16px;color:#04140e;background:linear-gradient(180deg,#5ff2a4,#3ddc84);box-shadow:0 5px 0 #146b3d; font-family: 'Manrope', sans-serif; transition: 0.15s;}
+  .btn-sell-all:active{transform:translateY(3px);box-shadow:0 2px 0 #146b3d}
+  
+  .toast-wrap{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:200;pointer-events:none}
+  .toast{padding:14px 24px;border-radius:16px;background:rgba(15,25,38,0.95);backdrop-filter:blur(10px);border:1px solid var(--line);font-size:14px;font-weight:900;text-align:center;animation:toastPop .4s cubic-bezier(0.2, 0.8, 0.2, 1), toastOut .3s 2s forwards;}
+  @keyframes toastPop{from{opacity:0;transform:translateY(30px) scale(0.8)}to{opacity:1;transform:none}}
+  @keyframes toastOut{to{opacity:0;transform:translateY(-20px) scale(0.9)}}
 </style>
 </head>
 <body data-theme="dark">
@@ -116,18 +140,17 @@
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.expand(); tg.setHeaderColor('#06090e'); tg.setBackgroundColor('#06090e'); }
     
-    // ВСТАВЬТЕ СЮДА ВАШ КЛЮЧ ANON ИЗ SUPABASE
+    // ВАШ КЛЮЧ ВСТАВЛЕН
     const SUPABASE_URL = 'https://ikadpwkwvphslxxskvbl.supabase.co'; 
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYWRwd2t3dnBoc2x4eHNrdmJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0NjQ2MjgsImV4cCI6MjEwOTA0MDYyOH0.koLyEKQyGSb4X5cCuMIpsR4zlp9OnWvfEO5PtTbQel8';
     
-    // Проверка: если ключ не вставлен, мы просто скроем ошибку и игра запустится без базы
     let supabaseClient = null;
     try {
-        if (!SUPABASE_KEY.includes('ВСТАВЬТЕ')) {
+        if (typeof supabase !== 'undefined') {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
     } catch(e) {
-        console.log("Ошибка БД. Работаем в локальном режиме.");
+        console.error("Supabase init error", e);
     }
 </script>
 
@@ -165,20 +188,20 @@
           <div class="stat-bar"><div class="stat-fill" id="liqBar"></div></div>
         </div>
       </div>
-      <button class="btn-gen" id="genBtn">⚡ Сгенерировать</button>
+      <button class="btn-gen" id="genBtn">⚡ СГЕНЕРИРОВАТЬ</button>
     </div>
     
     <div style="display:flex; gap:10px;">
-      <button class="btn-icon" style="flex:1; height:50px; font-size:14px;" onclick="openModal('wheelModal')">🎡 Колесо</button>
-      <button class="btn-icon" style="flex:1; height:50px; font-size:14px;" onclick="loadInventory(); openModal('collectionModal')">💼 Коллекция</button>
-      <button class="btn-icon" style="flex:1; height:50px; font-size:14px;" onclick="openModal('catalogModal')">📖 Каталог</button>
+      <button class="btn-icon" style="flex:1; height:54px; font-size:13px; font-weight:900; flex-direction: column; gap:4px;" onclick="openModal('wheelModal')"><span style="font-size:18px">🎡</span> Колесо</button>
+      <button class="btn-icon" style="flex:1; height:54px; font-size:13px; font-weight:900; flex-direction: column; gap:4px;" onclick="loadInventory(); openModal('collectionModal')"><span style="font-size:18px">💼</span> Коллекция</button>
+      <button class="btn-icon" style="flex:1; height:54px; font-size:13px; font-weight:900; flex-direction: column; gap:4px;" onclick="openModal('catalogModal')"><span style="font-size:18px">📖</span> Каталог</button>
     </div>
   </div>
 
   <div class="content" id="tab-tops">
-    <h2 style="font-size:20px; font-weight:900; margin-top:10px;">🏆 Топ игроков</h2>
+    <h2 style="font-size:22px; font-weight:900; margin-top:10px;">🏆 Топ игроков</h2>
     <div class="leaderboard" id="leaderboardList">
-      <div style="text-align:center; padding:20px; color:var(--muted);">Загрузка топов...</div>
+      <div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка топов...</div>
     </div>
   </div>
 
@@ -212,8 +235,8 @@
   <div class="modal-backdrop" onclick="closeModal('collectionModal')"></div>
   <div class="modal-card">
     <div class="modal-header"><h2>💼 Коллекция</h2><button class="modal-close" onclick="closeModal('collectionModal')">✕</button></div>
-    <div class="modal-body" id="invList" style="display:flex; flex-direction:column; gap:8px;"></div>
-    <div style="padding:16px; border-top:1px solid var(--line);"><button class="btn-sell-all" onclick="sellAll()">💰 Продать всё</button></div>
+    <div class="modal-body" id="invList"></div>
+    <div style="padding:16px; border-top:1px solid var(--line);"><button class="btn-sell-all" onclick="sellAll()">💰 ПРОДАТЬ ВСЁ</button></div>
   </div>
 </div>
 
@@ -230,12 +253,12 @@
   <div class="modal-card">
     <div class="modal-header"><h2>🎡 Колесо</h2><button class="modal-close" onclick="closeModal('wheelModal')">✕</button></div>
     <div class="modal-body" style="align-items:center;">
-      <div style="position:relative; width:250px; height:250px; margin:20px auto;">
-        <div style="position:absolute;top:-15px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:30px solid #ff3b6b;z-index:10;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.8));"></div>
-        <canvas id="wheelCanvas" width="500" height="500" style="width:100%;height:100%;border-radius:50%;transition:transform 4s cubic-bezier(0.2, 0.8, 0.2, 1);"></canvas>
+      <div style="position:relative; width:260px; height:260px; margin:20px auto;">
+        <div style="position:absolute;top:-15px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:35px solid #ff3b6b;z-index:10;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.8));"></div>
+        <canvas id="wheelCanvas" width="500" height="500" style="width:100%;height:100%;border-radius:50%;transition:transform 4s cubic-bezier(0.15, 0.9, 0.2, 1);"></canvas>
       </div>
-      <button class="btn-gen" id="spinBtn" style="width:80%; margin-top:10px;">Крутить</button>
-      <div id="cooldownTimer" style="margin-top:10px; font-size:12px; color:var(--muted); font-weight:800; text-align:center;"></div>
+      <button class="btn-gen" id="spinBtn" style="width:90%; margin-top:15px;">КРУТИТЬ</button>
+      <div id="cooldownTimer" style="margin-top:12px; font-size:13px; color:var(--muted); font-weight:900; text-align:center;"></div>
     </div>
   </div>
 </div>
@@ -263,7 +286,6 @@ let myId = user ? user.id : 0;
 let myName = user ? user.first_name : 'Игрок';
 let myPhoto = user ? user.photo_url : null;
 
-// Заполнение UI профиля
 if (user) {
     document.getElementById('tgName').textContent = myName;
     document.getElementById('profName').textContent = myName;
@@ -280,11 +302,10 @@ if (user) {
     }
 }
 
-/* --- БАЗА ДАННЫХ (СИНХРОНИЗАЦИЯ) --- */
 async function syncUser() {
     if (!supabaseClient || !myId) {
         updateUI();
-        return; // Работаем локально, если нет базы
+        return; 
     }
     try {
         let { data: dbUser, error } = await supabaseClient.from('users').select('*').eq('id', myId).single();
@@ -298,7 +319,7 @@ async function syncUser() {
             myBalance = parseFloat(dbUser.balance);
             myTotal = dbUser.total_generated;
         }
-    } catch(e) { console.log("DB Error"); }
+    } catch(e) { console.log("DB Error", e); }
     updateUI();
 }
 
@@ -314,7 +335,6 @@ async function addBalance(amount) {
     if (supabaseClient && myId) await supabaseClient.from('users').update({ balance: myBalance }).eq('id', myId);
 }
 
-/* --- НАВИГАЦИЯ --- */
 function switchTab(tabId, el) {
     document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -373,8 +393,9 @@ function rollRarity(){
 async function generate(){
   genBtn.disabled = true;
   displayEl.style.color = 'var(--muted)';
+  displayEl.classList.remove('pop-anim');
   rarityTag.classList.remove('show');
-  statsEl.style.opacity = 0;
+  statsEl.classList.remove('show');
 
   const finalName = randomName();
   const rarity = rollRarity();
@@ -397,6 +418,8 @@ async function generate(){
   displayEl.textContent = '@' + finalName;
   displayEl.style.color = rarity.color;
   displayEl.style.textShadow = `0 0 20px ${rarity.color}`;
+  displayEl.classList.add('pop-anim');
+  
   rarityTag.textContent = rarity.name;
   rarityTag.style.color = rarity.color;
   rarityTag.style.border = `1px solid ${rarity.color}`;
@@ -406,39 +429,40 @@ async function generate(){
   $('liqVal').textContent = liq + '%';
   $('readBar').style.width = read + '%';
   $('liqBar').style.width = liq + '%';
-  statsEl.style.opacity = 1;
+  statsEl.classList.add('show');
 
   if (supabaseClient && myId) {
       await supabaseClient.from('usernames').insert([{ 
           user_id: myId, username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale 
-      }]);
+      }]).catch(e => console.log(e));
       myTotal++;
-      await supabaseClient.from('users').update({ total_generated: myTotal }).eq('id', myId);
+      await supabaseClient.from('users').update({ total_generated: myTotal }).eq('id', myId).catch(e => console.log(e));
   }
   updateUI();
   genBtn.disabled = false;
 }
 
 /* --- КОЛЛЕКЦИЯ --- */
-let localInventory = [];
 async function loadInventory() {
-    let data = localInventory;
+    const list = $('invList');
+    list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>';
+    
+    let data = [];
     if (supabaseClient && myId) {
         const res = await supabaseClient.from('usernames').select('*').eq('user_id', myId).order('price', {ascending: false});
         if (res.data) data = res.data;
     }
     
-    const list = $('invList');
-    if(!data || data.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px">Пусто</div>'; return; }
+    if(!data || data.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Пусто</div>'; return; }
     
-    list.innerHTML = data.map(item => `
-        <div class="mc-item" style="border-left-color:${item.rarity_color}; flex-direction:row; align-items:center; padding:12px; border-radius:10px; border-left-width:4px; background:var(--card);">
+    list.innerHTML = data.map((item, index) => `
+        <div class="mc-item" style="border-left-color:${item.rarity_color}; animation-delay: ${index * 0.05}s">
             <div style="flex:1;">
-                <div class="mc-name" style="color:${item.rarity_color}">@${item.username}</div>
-                <div style="font-size:10px; color:var(--muted); margin-top:4px;">${item.rarity_name}</div>
+                <div class="mc-name" style="color:${item.rarity_color}; text-shadow: 0 0 10px ${item.rarity_color}55">@${item.username}</div>
+                <div style="font-size:11px; color:var(--muted); margin-top:4px; font-weight:800;">${item.rarity_name}</div>
             </div>
-            <div style="font-size:14px; font-weight:900; color:var(--gold); margin-right:12px;">${parseFloat(item.price).toFixed(2)} T</div>
-            <button class="mc-sell" style="padding:8px 12px;" onclick="sellItem(${item.id}, ${item.price})">💵</button>
+            <div style="font-size:15px; font-weight:900; color:var(--gold); margin-right:12px;">${parseFloat(item.price).toFixed(2)} T</div>
+            <button class="mc-sell" onclick="sellItem(${item.id}, ${item.price})">💵</button>
         </div>
     `).join('');
 }
@@ -468,7 +492,7 @@ async function sellAll() {
 async function loadLeaderboard() {
     const list = $('leaderboardList');
     if (!supabaseClient) {
-        list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px">База данных не подключена</div>';
+        list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">База данных не подключена</div>';
         return;
     }
     
@@ -476,7 +500,7 @@ async function loadLeaderboard() {
     if (!data) return;
     
     list.innerHTML = data.map((u, i) => `
-        <div class="lb-item">
+        <div class="lb-item" style="animation-delay: ${i * 0.05}s">
             <div class="lb-rank ${i===0?'top1':i===1?'top2':i===2?'top3':''}">${i+1}</div>
             <div class="lb-avatar" style="${u.photo_url ? `background-image:url(${u.photo_url})` : 'background:linear-gradient(135deg,#2aabee,#b06dff)'}"></div>
             <div class="lb-name">${u.first_name}</div>
@@ -490,6 +514,8 @@ function openModal(id) { $(id).classList.add('open'); }
 function closeModal(id) { $(id).classList.remove('open'); }
 
 genBtn.addEventListener('click', generate);
+
+// Запуск
 syncUser();
 </script>
 </body>
