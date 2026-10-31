@@ -97,34 +97,9 @@
   .toast{padding:14px 24px;border-radius:16px;background:rgba(15,25,38,0.95);border:1px solid var(--line);font-size:14px;font-weight:900;text-align:center;animation:toastPop .3s, toastOut .3s 2s forwards;}
   @keyframes toastPop{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
   @keyframes toastOut{to{opacity:0;transform:translateY(-20px)}}
-  
-  #debug-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); color: #ff5555; z-index: 9999; padding: 20px; font-family: monospace; font-size: 12px; overflow-y: auto; white-space: pre-wrap; }
 </style>
 </head>
-<body data-theme="dark">
-<div id="debug-overlay" onclick="this.style.display='none'"></div>
-
-<script>
-    window.onerror = function(msg, url, line) {
-        const debug = document.getElementById('debug-overlay');
-        debug.style.display = 'block';
-        debug.innerHTML += `<b>ОШИБКА:</b> ${msg}<br><b>Строка:</b> ${line}<br><br>`;
-        return false;
-    };
-
-    const tg = window.Telegram?.WebApp;
-    if (tg) { tg.expand(); tg.setHeaderColor('#06090e'); tg.setBackgroundColor('#06090e'); }
-    
-    let supabaseClient = null;
-    try {
-        if (typeof supabase !== 'undefined') {
-            supabaseClient = supabase.createClient(
-                'https://ikadpwkwvphslxxskvbl.supabase.co', 
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYWRwd2t3dnBoc2x4eHNrdmJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0NjQ2MjgsImV4cCI6MjEwOTA0MDYyOH0.koLyEKQyGSb4X5cCuMIpsR4zlp9OnWvfEO5PtTbQel8'
-            );
-        }
-    } catch(e) { console.log("Ошибка подключения базы:", e); }
-</script>
+<body>
 
 <div class="orb a"></div>
 <div class="orb b"></div>
@@ -235,280 +210,299 @@
 
 <div class="toast-wrap" id="toastWrap"></div>
 
+<!-- ЕДИНЫЙ СКРИПТ -->
 <script>
-/* --- ЛОГИКА (Исправлено) --- */
-// Убрана повторная строка const tg - она уже объявлена выше
-const user = tg?.initDataUnsafe?.user;
+    // 1. Инициализация Telegram
+    const tg = window.Telegram?.WebApp;
+    if (tg) { tg.expand(); tg.setHeaderColor('#06090e'); tg.setBackgroundColor('#06090e'); }
+    const user = tg?.initDataUnsafe?.user;
 
-let myBalance = 5.00;
-let myTotal = 0;
-let myId = user ? user.id : 0;
-let myName = user ? user.first_name : 'Игрок';
-let myPhoto = user ? user.photo_url : null;
-let localInventory = [];
-
-if (user) {
-    document.getElementById('tgName').textContent = myName;
-    document.getElementById('profName').textContent = myName;
-    document.getElementById('profId').textContent = 'ID: ' + myId;
-    if (myPhoto) {
-        document.getElementById('tgAvatar').style.background = `url(${myPhoto}) center/cover`;
-        document.getElementById('tgAvatar').textContent = '';
-        document.getElementById('profAvatar').style.background = `url(${myPhoto}) center/cover`;
-        document.getElementById('profAvatar').textContent = '';
-    } else {
-        const initial = myName[0].toUpperCase();
-        document.getElementById('tgAvatar').textContent = initial;
-        document.getElementById('profAvatar').textContent = initial;
-    }
-}
-
-async function syncUser() {
-    if (!supabaseClient || !myId) { updateUI(); return; }
+    // 2. База Данных
+    let supabaseClient = null;
     try {
-        let { data, error } = await supabaseClient.from('users').select('*').eq('id', myId).single();
-        if (error && error.code !== 'PGRST116') throw error; 
-        
-        if (!data) {
-            const { data: newUser } = await supabaseClient.from('users').insert([
-                { id: myId, first_name: myName, photo_url: myPhoto, balance: 5.00, total_generated: 0 }
-            ]).select().single();
-            data = newUser;
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(
+                'https://ikadpwkwvphslxxskvbl.supabase.co', 
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYWRwd2t3dnBoc2x4eHNrdmJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0NjQ2MjgsImV4cCI6MjEwOTA0MDYyOH0.koLyEKQyGSb4X5cCuMIpsR4zlp9OnWvfEO5PtTbQel8'
+            );
         }
-        if (data) {
-            myBalance = parseFloat(data.balance);
-            myTotal = data.total_generated;
+    } catch(e) { console.log("Ошибка подключения:", e); }
+
+    // 3. Переменные
+    let myBalance = 5.00;
+    let myTotal = 0;
+    let myId = user ? user.id : 0;
+    let myName = user ? user.first_name : 'Игрок';
+    let myPhoto = user ? user.photo_url : null;
+    let localInventory = [];
+
+    if (user) {
+        document.getElementById('tgName').textContent = myName;
+        document.getElementById('profName').textContent = myName;
+        document.getElementById('profId').textContent = 'ID: ' + myId;
+        if (myPhoto) {
+            document.getElementById('tgAvatar').style.background = `url(${myPhoto}) center/cover`;
+            document.getElementById('tgAvatar').textContent = '';
+            document.getElementById('profAvatar').style.background = `url(${myPhoto}) center/cover`;
+            document.getElementById('profAvatar').textContent = '';
+        } else {
+            const initial = myName[0].toUpperCase();
+            document.getElementById('tgAvatar').textContent = initial;
+            document.getElementById('profAvatar').textContent = initial;
         }
-    } catch(e) { console.log("Ошибка базы:", e); }
-    updateUI();
-}
-
-function updateUI() {
-    document.getElementById('balance').textContent = parseFloat(myBalance).toFixed(2);
-    document.getElementById('profBalance').textContent = parseFloat(myBalance).toFixed(2) + ' TON';
-    document.getElementById('profTotal').textContent = myTotal;
-}
-
-async function addBalance(amount) {
-    myBalance += amount;
-    updateUI();
-    if (supabaseClient && myId) {
-        try { await supabaseClient.from('users').update({ balance: myBalance }).eq('id', myId); } catch(e){}
     }
-}
 
-function switchTab(tabId, el) {
-    document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('tab-' + tabId).classList.add('active');
-    if(el) el.classList.add('active');
-    if (tabId === 'tops') loadLeaderboard();
-}
+    // 4. Функции UI
+    function updateUI() {
+        document.getElementById('balance').textContent = parseFloat(myBalance).toFixed(2);
+        document.getElementById('profBalance').textContent = parseFloat(myBalance).toFixed(2) + ' TON';
+        document.getElementById('profTotal').textContent = myTotal;
+    }
 
-const RARITIES = [
-  {id:'common', name:'Обычный', color:'#8b95a5', weight:6000, base:0.05, maxBase:0.15, penalty:0},
-  {id:'uncommon', name:'Необычный', color:'#3ddc84', weight:2500, base:0.25, maxBase:0.8, penalty:4},
-  {id:'rare', name:'Редкий', color:'#3b9eff', weight:1000, base:1.2, maxBase:5, penalty:10},
-  {id:'epic', name:'Эпический', color:'#b06dff', weight:350, base:6, maxBase:25, penalty:22},
-  {id:'legendary', name:'Легендарный', color:'#ffb020', weight:90, base:35, maxBase:120, penalty:38},
-  {id:'mythic', name:'Мифический', color:'#ff3b6b', weight:10, base:200, maxBase:600, penalty:55},
-  {id:'crystal', name:'Кристальная', color:'#00ffff', weight:5, base:1500, maxBase:1500, penalty:65},
-  {id:'divine', name:'Божественная', color:'#fff7a1', weight:2, base:500, maxBase:2500, penalty:75},
-  {id:'absolute', name:'Абсолютная', color:'#ff00ff', weight:1, base:1000, maxBase:5000, penalty:85},
-  {id:'anon', name:'Анонимный', color:'#39ff14', weight:0.1, base:0.001, maxBase:12000, penalty:95},
-];
-const PREFIX = ['user','pro','mega','neo','dark','light','king','queen','tech','cyber','pixel','ghost','shadow','storm','fire','ice','wolf','cat','ninja','star','moon','sun','red','blue','gold','silver','iron','fast','cold','hot','lucky','crazy','super','ultra','hyper','max','top','best','real','true','wild','free','young','big','black','white','void','echo','alpha','omega','degen','crypto','nft'];
-const BASES = ['user','player','hunter','master','god','boss','gamer','coder','dev','trader','wolf','fox','hawk','dragon','tiger','lion','bear','shark','viper','phoenix','knight','wizard','rider','walker','killer','slayer','lord','chief','ace','ghost','ninja','sniper','pilot','racer','king','man'];
-const SUFFIX = ['ww','xx','zz','qq','vv','oo','kk','01','07','99','777','2024','2025','_pro','_dev','_tg','_ru','_x','x','v','o','k','a','z','_official','_real'];
+    function switchTab(tabId, el) {
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        if(el) el.classList.add('active');
+        if (tabId === 'tops') loadLeaderboard();
+    }
 
-const $ = id => document.getElementById(id);
-const displayEl = $('display');
-const rarityTag = $('rarityTag');
-const statsEl = $('stats');
-const genBtn = $('genBtn');
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    
+    function showToast(text, color) {
+        const el = document.createElement('div');
+        el.className = 'toast';
+        el.style.color = color;
+        el.textContent = text;
+        document.getElementById('toastWrap').appendChild(el);
+        setTimeout(()=>el.remove(), 2300);
+    }
 
-function pick(a){return a[Math.floor(Math.random()*a.length)]}
-function rnd(n){return Math.floor(Math.random()*n)}
-const randLetters = n => { const a='abcdefghijklmnopqrstuvwxyz'; let s=''; for(let i=0;i<n;i++)s+=a[rnd(26)]; return s; };
-const randDigits  = n => { let s=''; for(let i=0;i<n;i++)s+=rnd(10); return s; };
+    // 5. База Данных Логика
+    async function syncUser() {
+        if (!supabaseClient || !myId) { updateUI(); return; }
+        try {
+            let { data, error } = await supabaseClient.from('users').select('*').eq('id', myId).single();
+            if (error && error.code !== 'PGRST116') throw error; 
+            
+            if (!data) {
+                const { data: newUser } = await supabaseClient.from('users').insert([
+                    { id: myId, first_name: myName, photo_url: myPhoto, balance: 5.00, total_generated: 0 }
+                ]).select().single();
+                data = newUser;
+            }
+            if (data) {
+                myBalance = parseFloat(data.balance);
+                myTotal = data.total_generated;
+            }
+        } catch(e) { console.log("Ошибка синхронизации:", e); }
+        updateUI();
+    }
 
-function randomName(){
-  if (Math.random() < 0.1) return randLetters(6) + randDigits(4);
-  const r = Math.random(); let n;
-  if (r < 0.30) n = pick(PREFIX) + pick(SUFFIX);
-  else if (r < 0.55) n = pick(BASES)  + randLetters(2 + rnd(2));
-  else if (r < 0.72) n = pick(PREFIX) + pick(BASES);
-  else if (r < 0.86) n = pick(BASES)  + (Math.random() < 0.5 ? '_' : '') + randDigits(2);
-  else n = randLetters(4 + rnd(4));
-  if (Math.random() < 0.10 && !n.includes('_')) n += '_' + pick(['x','pro','tg','ru','dev','0']);
-  return n.toLowerCase().slice(0, 32);
-}
-function rollRarity(){
-  const w = RARITIES.map(r=>r.weight);
-  const total = w.reduce((a,b)=>a+b,0);
-  let roll = Math.random()*total;
-  for (let i=0;i<RARITIES.length;i++){ roll-=w[i]; if(roll<=0) return RARITIES[i]; }
-  return RARITIES[0];
-}
+    async function addBalance(amount) {
+        myBalance += amount;
+        updateUI();
+        if (supabaseClient && myId) {
+            try { await supabaseClient.from('users').update({ balance: myBalance }).eq('id', myId); } catch(e){}
+        }
+    }
 
-async function generate(){
-  genBtn.disabled = true;
-  displayEl.style.color = 'var(--muted)';
-  displayEl.classList.remove('pop-anim');
-  rarityTag.classList.remove('show');
-  statsEl.classList.remove('show');
+    // 6. Генерация
+    const RARITIES = [
+      {id:'common', name:'Обычный', color:'#8b95a5', weight:6000, base:0.05, maxBase:0.15, penalty:0},
+      {id:'uncommon', name:'Необычный', color:'#3ddc84', weight:2500, base:0.25, maxBase:0.8, penalty:4},
+      {id:'rare', name:'Редкий', color:'#3b9eff', weight:1000, base:1.2, maxBase:5, penalty:10},
+      {id:'epic', name:'Эпический', color:'#b06dff', weight:350, base:6, maxBase:25, penalty:22},
+      {id:'legendary', name:'Легендарный', color:'#ffb020', weight:90, base:35, maxBase:120, penalty:38},
+      {id:'mythic', name:'Мифический', color:'#ff3b6b', weight:10, base:200, maxBase:600, penalty:55},
+      {id:'crystal', name:'Кристальная', color:'#00ffff', weight:5, base:1500, maxBase:1500, penalty:65},
+      {id:'divine', name:'Божественная', color:'#fff7a1', weight:2, base:500, maxBase:2500, penalty:75},
+      {id:'absolute', name:'Абсолютная', color:'#ff00ff', weight:1, base:1000, maxBase:5000, penalty:85},
+      {id:'anon', name:'Анонимный', color:'#39ff14', weight:0.1, base:0.001, maxBase:12000, penalty:95},
+    ];
+    const PREFIX = ['user','pro','mega','neo','dark','light','king','queen','tech','cyber','pixel','ghost','shadow','storm','fire','ice','wolf','cat','ninja','star','moon','sun','red','blue','gold','silver','iron','fast','cold','hot','lucky','crazy','super','ultra','hyper','max','top','best','real','true','wild','free','young','big','black','white','void','echo','alpha','omega','degen','crypto','nft'];
+    const BASES = ['user','player','hunter','master','god','boss','gamer','coder','dev','trader','wolf','fox','hawk','dragon','tiger','lion','bear','shark','viper','phoenix','knight','wizard','rider','walker','killer','slayer','lord','chief','ace','ghost','ninja','sniper','pilot','racer','king','man'];
+    const SUFFIX = ['ww','xx','zz','qq','vv','oo','kk','01','07','99','777','2024','2025','_pro','_dev','_tg','_ru','_x','x','v','o','k','a','z','_official','_real'];
 
-  const finalName = randomName();
-  const rarity = rollRarity();
-  
-  let mult = 0.75 + Math.random()*0.7;
-  let finalBase = rarity.base + Math.random() * (rarity.maxBase - rarity.base);
-  let val = Math.max(0.001, finalBase * mult);
-  let read = Math.max(5, Math.min(100, Math.round(100 - finalName.length * 5)));
-  let liq = Math.max(1, Math.min(99, Math.round(read*0.75 + 25 - rarity.penalty)));
-  let sale = Math.max(0.001, val * liq / 100);
+    function pick(a){return a[Math.floor(Math.random()*a.length)]}
+    function rnd(n){return Math.floor(Math.random()*n)}
+    const randLetters = n => { const a='abcdefghijklmnopqrstuvwxyz'; let s=''; for(let i=0;i<n;i++)s+=a[rnd(26)]; return s; };
+    const randDigits  = n => { let s=''; for(let i=0;i<n;i++)s+=rnd(10); return s; };
 
-  const t0 = performance.now();
-  await new Promise(res => {
-    const iv = setInterval(() => {
-      if (performance.now() - t0 > 600){ clearInterval(iv); res(); }
-      else displayEl.textContent = '@' + randomName();
-    }, 40);
-  });
+    function randomName(){
+      if (Math.random() < 0.1) return randLetters(6) + randDigits(4);
+      const r = Math.random(); let n;
+      if (r < 0.30) n = pick(PREFIX) + pick(SUFFIX);
+      else if (r < 0.55) n = pick(BASES)  + randLetters(2 + rnd(2));
+      else if (r < 0.72) n = pick(PREFIX) + pick(BASES);
+      else if (r < 0.86) n = pick(BASES)  + (Math.random() < 0.5 ? '_' : '') + randDigits(2);
+      else n = randLetters(4 + rnd(4));
+      if (Math.random() < 0.10 && !n.includes('_')) n += '_' + pick(['x','pro','tg','ru','dev','0']);
+      return n.toLowerCase().slice(0, 32);
+    }
+    function rollRarity(){
+      const w = RARITIES.map(r=>r.weight);
+      const total = w.reduce((a,b)=>a+b,0);
+      let roll = Math.random()*total;
+      for (let i=0;i<RARITIES.length;i++){ roll-=w[i]; if(roll<=0) return RARITIES[i]; }
+      return RARITIES[0];
+    }
 
-  displayEl.textContent = '@' + finalName;
-  displayEl.style.color = rarity.color;
-  displayEl.style.textShadow = `0 0 20px ${rarity.color}`;
-  displayEl.classList.add('pop-anim');
-  
-  rarityTag.textContent = rarity.name;
-  rarityTag.style.color = rarity.color;
-  rarityTag.style.border = `1px solid ${rarity.color}`;
-  rarityTag.classList.add('show');
-  
-  $('readVal').textContent = read + '%';
-  $('liqVal').textContent = liq + '%';
-  $('readBar').style.width = read + '%';
-  $('liqBar').style.width = liq + '%';
-  statsEl.classList.add('show');
+    const displayEl = document.getElementById('display');
+    const rarityTag = document.getElementById('rarityTag');
+    const statsEl = document.getElementById('stats');
+    const genBtn = document.getElementById('genBtn');
 
-  const newItem = { username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale };
-  
-  if (supabaseClient && myId) {
-      try {
-          await supabaseClient.from('usernames').insert([{ 
-              user_id: myId, username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale 
-          }]);
-          myTotal++;
-          await supabaseClient.from('users').update({ total_generated: myTotal }).eq('id', myId);
-      } catch(e) {
-          console.log("DB Save error:", e);
+    async function generate(){
+      genBtn.disabled = true;
+      displayEl.style.color = 'var(--muted)';
+      displayEl.classList.remove('pop-anim');
+      rarityTag.classList.remove('show');
+      statsEl.classList.remove('show');
+
+      const finalName = randomName();
+      const rarity = rollRarity();
+      
+      let mult = 0.75 + Math.random()*0.7;
+      let finalBase = rarity.base + Math.random() * (rarity.maxBase - rarity.base);
+      let val = Math.max(0.001, finalBase * mult);
+      let read = Math.max(5, Math.min(100, Math.round(100 - finalName.length * 5)));
+      let liq = Math.max(1, Math.min(99, Math.round(read*0.75 + 25 - rarity.penalty)));
+      let sale = Math.max(0.001, val * liq / 100);
+
+      const t0 = performance.now();
+      await new Promise(res => {
+        const iv = setInterval(() => {
+          if (performance.now() - t0 > 600){ clearInterval(iv); res(); }
+          else displayEl.textContent = '@' + randomName();
+        }, 40);
+      });
+
+      displayEl.textContent = '@' + finalName;
+      displayEl.style.color = rarity.color;
+      displayEl.style.textShadow = `0 0 20px ${rarity.color}`;
+      displayEl.classList.add('pop-anim');
+      
+      rarityTag.textContent = rarity.name;
+      rarityTag.style.color = rarity.color;
+      rarityTag.style.border = `1px solid ${rarity.color}`;
+      rarityTag.classList.add('show');
+      
+      document.getElementById('readVal').textContent = read + '%';
+      document.getElementById('liqVal').textContent = liq + '%';
+      document.getElementById('readBar').style.width = read + '%';
+      document.getElementById('liqBar').style.width = liq + '%';
+      statsEl.classList.add('show');
+
+      const newItem = { username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale };
+      
+      if (supabaseClient && myId) {
+          try {
+              await supabaseClient.from('usernames').insert([{ 
+                  user_id: myId, username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale 
+              }]);
+              myTotal++;
+              await supabaseClient.from('users').update({ total_generated: myTotal }).eq('id', myId);
+          } catch(e) {
+              localInventory.push(newItem);
+          }
+      } else {
           localInventory.push(newItem);
       }
-  } else {
-      localInventory.push(newItem);
-  }
-  
-  updateUI();
-  genBtn.disabled = false;
-}
+      
+      updateUI();
+      genBtn.disabled = false;
+    }
 
-async function openCollection() {
-    openModal('collectionModal');
-    const list = $('invList');
-    list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>';
-    
-    let data = [];
-    if (supabaseClient && myId) {
-        try {
-            const res = await supabaseClient.from('usernames').select('*').eq('user_id', myId).order('price', {ascending: false});
-            if (res.data) data = res.data;
-        } catch(e) {}
-    }
-    
-    data = [...data, ...localInventory];
-    
-    if(data.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Пусто</div>'; return; }
-    
-    list.innerHTML = data.map((item, index) => `
-        <div class="mc-item" style="border-left-color:${item.rarity_color};">
-            <div style="flex:1;">
-                <div class="mc-name" style="color:${item.rarity_color}">@${item.username}</div>
-                <div style="font-size:11px; color:var(--muted); margin-top:4px; font-weight:800;">${item.rarity_name}</div>
-            </div>
-            <div style="font-size:15px; font-weight:900; color:var(--gold); margin-right:12px;">${parseFloat(item.price).toFixed(2)} T</div>
-            <button class="mc-sell" onclick="sellItem('${item.id || 'local'}', ${item.price}, ${index})">💵</button>
-        </div>
-    `).join('');
-}
-
-async function sellItem(id, price, idx) {
-    if (id !== 'local' && supabaseClient && myId) {
-        try { await supabaseClient.from('usernames').delete().eq('id', id); } catch(e){}
-    } else {
-        localInventory.splice(idx, 1);
-    }
-    await addBalance(price);
-    openCollection();
-}
-
-async function sellAll() {
-    let tot = 0;
-    if (supabaseClient && myId) {
-        try {
-            const { data } = await supabaseClient.from('usernames').select('*').eq('user_id', myId);
-            if(data && data.length > 0) {
-                tot = data.reduce((s,i)=>s+parseFloat(i.price),0);
-                await supabaseClient.from('usernames').delete().eq('user_id', myId);
-            }
-        } catch(e){}
-    }
-    
-    if(localInventory.length > 0) {
-        tot += localInventory.reduce((s,i)=>s+parseFloat(i.price),0);
-        localInventory = [];
-    }
-    
-    if(tot > 0) {
-        await addBalance(tot);
-        showToast(`+${tot.toFixed(2)} TON`, '#3ddc84');
-    }
-    closeModal('collectionModal');
-}
-
-async function loadLeaderboard() {
-    const list = $('leaderboardList');
-    if (!supabaseClient) {
-        list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">База данных не подключена</div>';
-        return;
-    }
-    try {
-        const { data } = await supabaseClient.from('users').select('*').order('balance', {ascending: false}).limit(50);
-        if (!data) return;
-        list.innerHTML = data.map((u, i) => `
-            <div class="lb-item">
-                <div class="lb-rank ${i===0?'top1':i===1?'top2':i===2?'top3':''}">${i+1}</div>
-                <div class="lb-avatar" style="${u.photo_url ? `background-image:url(${u.photo_url})` : 'background:linear-gradient(135deg,#2aabee,#b06dff)'}"></div>
-                <div class="lb-name">${u.first_name}</div>
-                <div class="lb-bal">${parseFloat(u.balance).toFixed(1)} TON</div>
+    // 7. Коллекция
+    async function openCollection() {
+        openModal('collectionModal');
+        const list = document.getElementById('invList');
+        list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>';
+        
+        let data = [];
+        if (supabaseClient && myId) {
+            try {
+                const res = await supabaseClient.from('usernames').select('*').eq('user_id', myId).order('price', {ascending: false});
+                if (res.data) data = res.data;
+            } catch(e) {}
+        }
+        
+        data = [...data, ...localInventory];
+        
+        if(data.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Пусто</div>'; return; }
+        
+        list.innerHTML = data.map((item, index) => `
+            <div class="mc-item" style="border-left-color:${item.rarity_color};">
+                <div style="flex:1;">
+                    <div class="mc-name" style="color:${item.rarity_color}">@${item.username}</div>
+                    <div style="font-size:11px; color:var(--muted); margin-top:4px; font-weight:800;">${item.rarity_name}</div>
+                </div>
+                <div style="font-size:15px; font-weight:900; color:var(--gold); margin-right:12px;">${parseFloat(item.price).toFixed(2)} T</div>
+                <button class="mc-sell" onclick="sellItem('${item.id || 'local'}', ${item.price}, ${index})">💵</button>
             </div>
         `).join('');
-    } catch(e) {}
-}
+    }
 
-function openModal(id) { $(id).classList.add('open'); }
-function closeModal(id) { $(id).classList.remove('open'); }
-function showToast(text, color) {
-    const el = document.createElement('div');
-    el.className = 'toast';
-    el.style.color = color;
-    el.textContent = text;
-    document.getElementById('toastWrap').appendChild(el);
-    setTimeout(()=>el.remove(), 2300);
-}
+    async function sellItem(id, price, idx) {
+        if (id !== 'local' && supabaseClient && myId) {
+            try { await supabaseClient.from('usernames').delete().eq('id', id); } catch(e){}
+        } else {
+            localInventory.splice(idx, 1);
+        }
+        await addBalance(price);
+        openCollection();
+    }
 
-genBtn.addEventListener('click', generate);
-syncUser();
+    async function sellAll() {
+        let tot = 0;
+        if (supabaseClient && myId) {
+            try {
+                const { data } = await supabaseClient.from('usernames').select('*').eq('user_id', myId);
+                if(data && data.length > 0) {
+                    tot = data.reduce((s,i)=>s+parseFloat(i.price),0);
+                    await supabaseClient.from('usernames').delete().eq('user_id', myId);
+                }
+            } catch(e){}
+        }
+        
+        if(localInventory.length > 0) {
+            tot += localInventory.reduce((s,i)=>s+parseFloat(i.price),0);
+            localInventory = [];
+        }
+        
+        if(tot > 0) {
+            await addBalance(tot);
+            showToast(`+${tot.toFixed(2)} TON`, '#3ddc84');
+        }
+        closeModal('collectionModal');
+    }
+
+    // 8. Топы
+    async function loadLeaderboard() {
+        const list = document.getElementById('leaderboardList');
+        if (!supabaseClient) {
+            list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">База данных не подключена</div>';
+            return;
+        }
+        try {
+            const { data } = await supabaseClient.from('users').select('*').order('balance', {ascending: false}).limit(50);
+            if (!data) return;
+            list.innerHTML = data.map((u, i) => `
+                <div class="lb-item">
+                    <div class="lb-rank ${i===0?'top1':i===1?'top2':i===2?'top3':''}">${i+1}</div>
+                    <div class="lb-avatar" style="${u.photo_url ? `background-image:url(${u.photo_url})` : 'background:linear-gradient(135deg,#2aabee,#b06dff)'}"></div>
+                    <div class="lb-name">${u.first_name}</div>
+                    <div class="lb-bal">${parseFloat(u.balance).toFixed(1)} TON</div>
+                </div>
+            `).join('');
+        } catch(e) {}
+    }
+
+    // Старт
+    genBtn.addEventListener('click', generate);
+    syncUser();
 </script>
 </body>
 </html>
