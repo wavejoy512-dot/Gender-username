@@ -24,8 +24,6 @@
   .top-actions{display:flex;gap:8px;align-items:center}
   .balance{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:14px;font-weight:900;font-size:15px;background:var(--card);border:1px solid var(--line);}
   .ton-diamond{width:18px;height:18px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#0098ea,#7ce0ff);border-radius:50%;color:#03141f;font-size:11px;font-weight:900;}
-  .btn-icon{width:38px;height:38px;border-radius:12px;cursor:pointer;font-size:16px;background:var(--card);border:1px solid var(--line);color:var(--txt);display:grid;place-items:center; transition: all 0.15s;}
-  .btn-icon:active{transform: scale(0.9);}
 
   /* КОНТЕНТ */
   .content{flex:1; overflow-y:auto; padding: 0 16px 20px; display:none; flex-direction:column; gap:16px;}
@@ -92,6 +90,9 @@
   .mc-sell{background:var(--line); border:none; border-radius:10px; padding:8px 12px; color:var(--txt); font-size:14px; font-weight:900; cursor:pointer;}
   .btn-sell-all{width:100%;padding:16px;border-radius:16px;border:none;font-weight:900;font-size:16px;color:#04140e;background:linear-gradient(180deg,#5ff2a4,#3ddc84);box-shadow:0 5px 0 #146b3d; font-family: 'Manrope', sans-serif;}
   .btn-sell-all:active{transform:translateY(3px);box-shadow:0 2px 0 #146b3d}
+
+  /* Каталог */
+  .cat-item{display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:14px; background:var(--card); border:1px solid var(--line); border-left-width:4px;}
   
   .toast-wrap{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:200;pointer-events:none}
   .toast{padding:14px 24px;border-radius:16px;background:rgba(15,25,38,0.95);border:1px solid var(--line);font-size:14px;font-weight:900;text-align:center;animation:toastPop .3s, toastOut .3s 2s forwards;}
@@ -138,7 +139,7 @@
     </div>
     
     <div style="display:flex; gap:10px;">
-      <button class="btn-icon" style="flex:1; height:54px; font-size:13px; font-weight:900; flex-direction: column; gap:4px;" onclick="openModal('wheelModal')"><span style="font-size:18px">🎡</span> Колесо</button>
+      <button class="btn-icon" style="flex:1; height:54px; font-size:13px; font-weight:900; flex-direction: column; gap:4px;" onclick="openWheel()"><span style="font-size:18px">🎡</span> Колесо</button>
       <button class="btn-icon" style="flex:1; height:54px; font-size:13px; font-weight:900; flex-direction: column; gap:4px;" onclick="openCollection()"><span style="font-size:18px">💼</span> Коллекция</button>
       <button class="btn-icon" style="flex:1; height:54px; font-size:13px; font-weight:900; flex-direction: column; gap:4px;" onclick="openModal('catalogModal')"><span style="font-size:18px">📖</span> Каталог</button>
     </div>
@@ -201,16 +202,16 @@
     <div class="modal-body" style="align-items:center;">
       <div style="position:relative; width:260px; height:260px; margin:20px auto;">
         <div style="position:absolute;top:-15px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:35px solid #ff3b6b;z-index:10;"></div>
-        <canvas id="wheelCanvas" width="500" height="500" style="width:100%;height:100%;border-radius:50%;"></canvas>
+        <canvas id="wheelCanvas" width="500" height="500" style="width:100%;height:100%;border-radius:50%;transition:transform 4s cubic-bezier(0.2, 0.8, 0.2, 1);"></canvas>
       </div>
       <button class="btn-gen" id="spinBtn" style="width:90%; margin-top:15px;">КРУТИТЬ</button>
+      <div id="cooldownTimer" style="margin-top:12px; font-size:12px; color:var(--muted); font-weight:900; text-align:center;"></div>
     </div>
   </div>
 </div>
 
 <div class="toast-wrap" id="toastWrap"></div>
 
-<!-- ЕДИНЫЙ СКРИПТ -->
 <script>
     // 1. Инициализация Telegram
     const tg = window.Telegram?.WebApp;
@@ -228,13 +229,15 @@
         }
     } catch(e) { console.log("Ошибка подключения:", e); }
 
-    // 3. Переменные
+    // 3. Переменные и Локальное хранилище (на случай ошибки БД)
     let myBalance = 5.00;
     let myTotal = 0;
     let myId = user ? user.id : 0;
     let myName = user ? user.first_name : 'Игрок';
     let myPhoto = user ? user.photo_url : null;
-    let localInventory = [];
+    
+    // Загружаем локальные юзы из памяти телефона
+    let localInventory = JSON.parse(localStorage.getItem('geners_inv')) || [];
 
     if (user) {
         document.getElementById('tgName').textContent = myName;
@@ -279,7 +282,7 @@
         setTimeout(()=>el.remove(), 2300);
     }
 
-    // 5. База Данных Логика
+    // 5. Синхронизация с БД
     async function syncUser() {
         if (!supabaseClient || !myId) { updateUI(); return; }
         try {
@@ -296,7 +299,7 @@
                 myBalance = parseFloat(data.balance);
                 myTotal = data.total_generated;
             }
-        } catch(e) { console.log("Ошибка синхронизации:", e); }
+        } catch(e) { console.log("DB Error:", e); }
         updateUI();
     }
 
@@ -395,20 +398,26 @@
       document.getElementById('liqBar').style.width = liq + '%';
       statsEl.classList.add('show');
 
-      const newItem = { username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale };
+      const newItem = { id: 'local_' + Date.now(), username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale };
       
+      // Пытаемся сохранить в облако
+      let savedInCloud = false;
       if (supabaseClient && myId) {
           try {
               await supabaseClient.from('usernames').insert([{ 
                   user_id: myId, username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale 
               }]);
+              savedInCloud = true;
               myTotal++;
               await supabaseClient.from('users').update({ total_generated: myTotal }).eq('id', myId);
-          } catch(e) {
-              localInventory.push(newItem);
-          }
-      } else {
+          } catch(e) { console.log("DB Save error:", e); }
+      }
+      
+      // Если облако не сработало - сохраняем в память телефона
+      if (!savedInCloud) {
           localInventory.push(newItem);
+          localStorage.setItem('geners_inv', JSON.stringify(localInventory));
+          myTotal++;
       }
       
       updateUI();
@@ -422,6 +431,7 @@
         list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>';
         
         let data = [];
+        // Грузим из облака
         if (supabaseClient && myId) {
             try {
                 const res = await supabaseClient.from('usernames').select('*').eq('user_id', myId).order('price', {ascending: false});
@@ -429,6 +439,7 @@
             } catch(e) {}
         }
         
+        // Подмешиваем локальные (из памяти)
         data = [...data, ...localInventory];
         
         if(data.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Пусто</div>'; return; }
@@ -440,16 +451,19 @@
                     <div style="font-size:11px; color:var(--muted); margin-top:4px; font-weight:800;">${item.rarity_name}</div>
                 </div>
                 <div style="font-size:15px; font-weight:900; color:var(--gold); margin-right:12px;">${parseFloat(item.price).toFixed(2)} T</div>
-                <button class="mc-sell" onclick="sellItem('${item.id || 'local'}', ${item.price}, ${index})">💵</button>
+                <button class="mc-sell" onclick="sellItem('${item.id}', ${item.price})">💵</button>
             </div>
         `).join('');
     }
 
-    async function sellItem(id, price, idx) {
-        if (id !== 'local' && supabaseClient && myId) {
+    async function sellItem(id, price) {
+        if (id.toString().startsWith('local_')) {
+            // Продаем локальный
+            localInventory = localInventory.filter(i => i.id !== id);
+            localStorage.setItem('geners_inv', JSON.stringify(localInventory));
+        } else if (supabaseClient && myId) {
+            // Продаем облачный
             try { await supabaseClient.from('usernames').delete().eq('id', id); } catch(e){}
-        } else {
-            localInventory.splice(idx, 1);
         }
         await addBalance(price);
         openCollection();
@@ -470,6 +484,7 @@
         if(localInventory.length > 0) {
             tot += localInventory.reduce((s,i)=>s+parseFloat(i.price),0);
             localInventory = [];
+            localStorage.setItem('geners_inv', JSON.stringify([]));
         }
         
         if(tot > 0) {
@@ -488,7 +503,10 @@
         }
         try {
             const { data } = await supabaseClient.from('users').select('*').order('balance', {ascending: false}).limit(50);
-            if (!data) return;
+            if (!data || data.length === 0) {
+                list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Тут пока пусто. Пригласи друзей!</div>';
+                return;
+            }
             list.innerHTML = data.map((u, i) => `
                 <div class="lb-item">
                     <div class="lb-rank ${i===0?'top1':i===1?'top2':i===2?'top3':''}">${i+1}</div>
@@ -497,8 +515,117 @@
                     <div class="lb-bal">${parseFloat(u.balance).toFixed(1)} TON</div>
                 </div>
             `).join('');
-        } catch(e) {}
+        } catch(e) {
+            list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Ошибка загрузки топов</div>';
+        }
     }
+
+    // 9. Каталог
+    function renderCatalog() {
+        document.getElementById('catalogBody').innerHTML = RARITIES.map(r => `
+            <div class="cat-item" style="border-left-color:${r.color}">
+                <div style="font-weight:900; color:${r.color}">${r.name}</div>
+                <div style="font-family:monospace; font-weight:900; color:var(--gold)">от ${r.base} TON</div>
+            </div>
+        `).join('');
+    }
+    renderCatalog();
+
+    // 10. Колесо
+    const WHEEL_PRIZES = [
+      { label: '10 TON', type: 'ton', value: 10, color: '#3b9eff' },
+      { label: 'x2 BOOST', type: 'mult', value: 2, color: '#ff3b6b' },
+      { label: '1 TON', type: 'ton', value: 1, color: '#8b95a5' },
+      { label: '50 TON', type: 'ton', value: 50, color: '#b06dff' },
+      { label: 'x2 BOOST', type: 'mult', value: 2, color: '#ff3b6b' },
+      { label: '5 TON', type: 'ton', value: 5, color: '#3ddc84' },
+      { label: '100 TON', type: 'ton', value: 100, color: '#ffb020' },
+      { label: 'ПУСТО', type: 'none', value: 0, color: '#333' },
+    ];
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    let currentRotation = 0;
+    let isSpinning = false;
+
+    function drawWheel() {
+      const numSlices = WHEEL_PRIZES.length;
+      const sliceAngle = (2 * Math.PI) / numSlices;
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const radius = canvas.width / 2 - 10;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < numSlices; i++) {
+        const startAngle = i * sliceAngle;
+        const endAngle = startAngle + sliceAngle;
+
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, radius, startAngle, endAngle);
+        ctx.fillStyle = WHEEL_PRIZES[i].color;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(startAngle + sliceAngle / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 24px 'Manrope', sans-serif";
+        ctx.shadowColor = "rgba(0,0,0,0.8)";
+        ctx.shadowBlur = 6;
+        ctx.fillText(WHEEL_PRIZES[i].label, radius - 20, 8);
+        ctx.restore();
+      }
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, 40, 0, Math.PI * 2);
+      ctx.fillStyle = '#0f151e';
+      ctx.fill();
+      ctx.strokeStyle = '#2aabee';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+    }
+
+    function openWheel() {
+        openModal('wheelModal');
+        drawWheel();
+    }
+
+    document.getElementById('spinBtn').addEventListener('click', () => {
+        if (isSpinning) return;
+        isSpinning = true;
+        const btn = document.getElementById('spinBtn');
+        btn.disabled = true;
+        btn.textContent = 'КРУТИТСЯ...';
+
+        const spins = 5 + Math.floor(Math.random() * 5);
+        const randomDeg = Math.floor(Math.random() * 360);
+        currentRotation += (spins * 360) + randomDeg;
+        canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+        setTimeout(async () => {
+            isSpinning = false;
+            btn.disabled = false;
+            btn.textContent = 'КРУТИТЬ';
+
+            const normalized = currentRotation % 360;
+            const sliceAngle = 360 / WHEEL_PRIZES.length;
+            let index = Math.floor((360 - normalized + 270) % 360 / sliceAngle);
+            if (index < 0) index += WHEEL_PRIZES.length;
+            const prize = WHEEL_PRIZES[index];
+
+            if (prize.type === 'ton') {
+                await addBalance(prize.value);
+                showToast(`Выигрыш: ${prize.value} TON!`, '#ffcf4d');
+            } else {
+                showToast(`Выигрыш: ${prize.label}`, '#ff3b6b');
+            }
+        }, 4100);
+    });
 
     // Старт
     genBtn.addEventListener('click', generate);
