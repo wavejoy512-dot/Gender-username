@@ -452,7 +452,7 @@
         }
     } catch(e) { console.log("Ошибка подключения:", e); }
 
-    // 5. Данные (Защита от сброса баланса)
+    // 5. Данные (МУЛЬТИ-СОХРАНЕНИЕ)
     let gameData = {
         balance: 5.00,
         total: 0,
@@ -464,8 +464,9 @@
             const saved = localStorage.getItem('geners_data');
             if (saved) {
                 const parsed = JSON.parse(saved);
-                gameData.balance = parseFloat(parsed.balance) || 5.00;
-                gameData.total = parseInt(parsed.total) || 0;
+                // Если баланс 0, это не должно сбрасывать его до 5.00. Проверяем на undefined.
+                gameData.balance = parsed.balance !== undefined ? parseFloat(parsed.balance) : 5.00;
+                gameData.total = parsed.total !== undefined ? parseInt(parsed.total) : 0;
                 gameData.inventory = Array.isArray(parsed.inventory) ? parsed.inventory : [];
             }
         } catch(e) { console.error("Local storage error", e); }
@@ -474,6 +475,12 @@
     function saveLocalData() {
         try {
             localStorage.setItem('geners_data', JSON.stringify(gameData));
+            // Дублируем в Telegram CloudStorage для 100% сохранности
+            if (tg && tg.CloudStorage) {
+                tg.CloudStorage.setItem('geners_balance', gameData.balance.toString(), () => {});
+                tg.CloudStorage.setItem('geners_total', gameData.total.toString(), () => {});
+                tg.CloudStorage.setItem('geners_inventory', JSON.stringify(gameData.inventory), () => {});
+            }
         } catch(e) { console.error("Local save error", e); }
     }
 
@@ -585,10 +592,32 @@
         }
     }
 
-    // 7. СИНХРОНИЗАЦИЯ (Защита от сброса)
+    // 7. СИНХРОНИЗАЦИЯ (Безопасная)
     async function syncUser() {
         loadLocalData();
         updateUI();
+
+        // Подгружаем из облака Telegram (высший приоритет)
+        if (tg && tg.CloudStorage) {
+            tg.CloudStorage.getItem('geners_balance', (err, val) => {
+                if (val) {
+                    const cloudBal = parseFloat(val);
+                    if (cloudBal > gameData.balance) {
+                        gameData.balance = cloudBal;
+                        updateUI();
+                    }
+                }
+            });
+            tg.CloudStorage.getItem('geners_total', (err, val) => {
+                if (val) {
+                    const cloudTot = parseInt(val);
+                    if (cloudTot > gameData.total) {
+                        gameData.total = cloudTot;
+                        updateUI();
+                    }
+                }
+            });
+        }
 
         if (!supabaseClient || !myId) return;
         try {
@@ -604,13 +633,13 @@
                 const dbBalance = parseFloat(data.balance) || 0;
                 const dbTotal = parseInt(data.total_generated) || 0;
 
-                // Если в облаке больше, берем облако (например, зашел с другого телефона)
+                // Если в облаке Supabase больше, берем его
                 if (dbBalance > gameData.balance) {
                     gameData.balance = dbBalance;
                     gameData.total = dbTotal;
                     saveLocalData();
                 } 
-                // Если локально больше (например, играл офлайн), обновляем облако
+                // Если локально больше, обновляем Supabase
                 else if (gameData.balance > dbBalance) {
                     await supabaseClient.from('users').update({ 
                         balance: gameData.balance, total_generated: gameData.total 
@@ -790,7 +819,7 @@
                 gameData.inventory = gameData.inventory.filter(i => i.id !== id);
             } else if (supabaseClient && myId) { await supabaseClient.from('usernames').delete().eq('id', id); }
             
-            gameData.balance += price;
+            gameData.balance += parseFloat(price);
             saveLocalData();
             updateUI();
             
@@ -874,7 +903,7 @@
     }
     renderCatalog();
 
-    // 12. Колесо (Больше ПУСТО)
+    // 12. Колесо
     const WHEEL_PRIZES = [
       { label: 'ПУСТО', type: 'none', value: 0, color: '#222' },
       { label: '10 TON', type: 'ton', value: 10, color: '#3b9eff' },
