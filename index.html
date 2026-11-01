@@ -31,6 +31,7 @@
 
   .app{flex:1; display:flex; flex-direction:column; width:100%; max-width:480px; margin:0 auto; position:relative; z-index:1; height:100dvh;}
   
+  /* ШАПКА */
   .topbar{display:flex; align-items:center; justify-content:space-between; padding:12px 16px; padding-top: calc(12px + env(safe-area-inset-top)); gap:10px;}
   .user-profile{display:flex;align-items:center;gap:10px; cursor:pointer; flex:1; overflow: hidden;}
   .avatar{width:38px;height:38px; min-width: 38px; border-radius:50%;background:linear-gradient(135deg,#2aabee,#b06dff);display:grid;place-items:center;font-weight:900;color:#fff;border:2px solid var(--line);background-size:cover;background-position:center; font-size: 16px;}
@@ -38,6 +39,9 @@
   .top-actions{display:flex;gap:8px;align-items:center}
   .balance{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:14px;font-weight:900;font-size:15px;background:var(--card);border:1px solid var(--line); box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
   .ton-diamond{width:18px;height:18px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#0098ea,#7ce0ff);border-radius:50%;color:#03141f;font-size:11px;font-weight:900;}
+  
+  .btn-icon{background:transparent;border:none;color:#fff;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;transition:0.2s;}
+  .btn-icon:active{transform:scale(0.9);}
 
   .content{flex:1; overflow-y:auto; padding: 0 16px 20px; display:none; flex-direction:column; gap:16px;}
   .content.active{display:flex; animation: slideUpFade 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);}
@@ -45,6 +49,7 @@
 
   .card{background:var(--card); border:1px solid var(--line); border-radius:24px; padding:18px; display:flex; flex-direction:column; gap:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);}
   
+  /* ДИСПЛЕЙ */
   .display-wrap{position:relative; height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:20px; overflow:hidden; background:#080d13; border:1px solid #1a2635; box-shadow: inset 0 10px 30px rgba(0,0,0,0.8); cursor: pointer; transition: transform 0.1s;}
   .display-wrap:active { transform: scale(0.98); }
   
@@ -89,13 +94,15 @@
   .mini-btns{display:flex; gap:10px;}
   .btn-mini{
     flex:1; height:60px; border-radius:16px; border:1px solid var(--line);
-    background: #141d29; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    background: #141d29; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
     font-size: 12px; font-weight: 900; cursor: pointer; transition: all 0.2s;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 10px rgba(0,0,0,0.3);
   }
+  .btn-mini svg { stroke: var(--muted); transition: 0.2s; }
   .btn-mini:active { transform: scale(0.95); background: #1a2635; }
-  .btn-mini span { font-size: 20px; }
+  .btn-mini:active svg { stroke: #fff; }
 
+  /* Топы */
   .leaderboard{display:flex; flex-direction:column; gap:10px;}
   .lb-item{display:flex; align-items:center; gap:12px; padding:14px; border-radius:18px; background:var(--card); border:1px solid var(--line);}
   .lb-rank{font-size:18px; font-weight:900; width:28px; text-align:center; color:var(--muted);}
@@ -108,6 +115,7 @@
   .lb-name{flex:1; font-weight:900; font-size:15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
   .lb-bal{font-family:ui-monospace,monospace; font-weight:900; color:var(--gold); font-size: 15px;}
 
+  /* Профиль */
   .profile-header{display:flex; flex-direction:column; align-items:center; gap:12px; margin:20px 0;}
   .profile-avatar{width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,#2aabee,#b06dff); display:grid; place-items:center; font-size:36px; font-weight:900; color:#fff; border:4px solid var(--card); background-size:cover; background-position:center; box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
   .profile-name{font-size:24px; font-weight:900;}
@@ -117,34 +125,51 @@
   .p-stat .val{font-size:20px; font-weight:900; color:var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.3);}
   .p-stat .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; font-weight:900; margin-top:6px;}
 
+  /* Нижнее меню */
   .bottom-nav{display:flex; justify-content:space-around; align-items:center; padding:12px 16px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); background:var(--nav-bg); border-top:1px solid var(--line);}
   .nav-item{display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--muted); font-size:12px; font-weight:900; cursor:pointer; transition:.3s; padding: 6px 16px; border-radius: 14px;}
   .nav-item.active{color:var(--accent); background: rgba(42,171,238,0.1); transform: translateY(-2px); box-shadow: 0 0 15px rgba(42,171,238,0.2);}
-  .nav-item .icon{font-size:22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));}
+  .nav-item .icon{display:flex; align-items:center; justify-content:center;}
+  .nav-item .icon svg{width:24px; height:24px; transition:0.2s;}
+  .nav-item.active .icon svg { stroke: var(--accent); }
 
+  /* Модалки */
   .modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .3s}
   .modal.open{opacity:1;pointer-events:auto}
   .modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px)}
   .modal-card{position:relative;z-index:1;width:100%;max-width:400px;max-height:85vh;display:flex;flex-direction:column;background:#0f151e;border:1px solid var(--line);border-radius:28px;overflow:hidden;transform:scale(.85);transition:transform .3s;}
   .modal.open .modal-card{transform:scale(1)}
   .modal-header{display:flex;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line);}
-  .modal-header h2{font-size:16px;font-weight:900;text-transform:uppercase;}
-  .modal-close{margin-left:auto;width:34px;height:34px;border-radius:12px;background:var(--card);color:var(--txt);display:grid;place-items:center;cursor:pointer;border:1px solid var(--line); font-weight: 900;}
+  .modal-header h2{font-size:16px;font-weight:900;text-transform:uppercase; display:flex; align-items:center; gap:8px;}
+  .modal-header h2 svg { stroke: var(--accent); }
+  .modal-close{margin-left:auto;width:34px;height:34px;border-radius:12px;background:var(--card);color:var(--txt);display:grid;place-items:center;cursor:pointer;border:1px solid var(--line); transition: 0.2s;}
+  .modal-close svg { stroke: var(--muted); }
+  .modal-close:active { background: var(--line); }
+  .modal-close:active svg { stroke: #fff; }
   .modal-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px}
   
   .mc-item{display:flex; align-items:center; justify-content:space-between; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px; border-left-width:4px;}
   .mc-name{font-family:monospace;font-size:15px;font-weight:900;word-break:break-all;}
-  .mc-sell{background:#1a2635; border:none; border-radius:10px; padding:8px 12px; color:var(--txt); font-size:14px; font-weight:900; cursor:pointer; transition: 0.2s;}
-  .mc-sell:active{background: var(--accent); color: #03121c;}
-  .btn-sell-all{width:100%;padding:16px;border-radius:16px;border:none;font-weight:900;font-size:16px;color:#04140e;background:linear-gradient(180deg,#5ff2a4,#3ddc84);box-shadow:0 5px 0 #146b3d; font-family: 'Manrope', sans-serif;}
+  .mc-sell{background:#1a2635; border:none; border-radius:10px; padding:8px 12px; color:var(--txt); cursor:pointer; transition: 0.2s; display:flex; align-items:center; justify-content:center;}
+  .mc-sell svg { stroke: var(--gold); }
+  .mc-sell:active{background: var(--gold);}
+  .mc-sell:active svg { stroke: #000; }
+  
+  .btn-sell-all{width:100%;padding:16px;border-radius:16px;border:none;font-weight:900;font-size:16px;color:#04140e;background:linear-gradient(180deg,#5ff2a4,#3ddc84);box-shadow:0 5px 0 #146b3d; font-family: 'Manrope', sans-serif; display:flex; align-items:center; justify-content:center; gap:8px;}
   .btn-sell-all:active{transform:translateY(3px);box-shadow:0 2px 0 #146b3d}
+  .btn-sell-all svg { stroke: #04140e; }
 
   .cat-item{display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:14px; background:var(--card); border:1px solid var(--line); border-left-width:4px;}
   
+  /* Настройки */
   .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: var(--card); border-radius: 16px; border: 1px solid var(--line); margin-bottom: 8px; }
-  .setting-info { display: flex; flex-direction: column; gap: 4px; }
+  .setting-info { display: flex; align-items: center; gap: 12px; }
+  .setting-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.05); display: grid; place-items: center; }
+  .setting-icon svg { stroke: var(--accent); }
+  .setting-text { display: flex; flex-direction: column; gap: 2px; }
   .setting-title { font-weight: 900; font-size: 15px; }
   .setting-desc { font-size: 11px; color: var(--muted); font-weight: 600; }
+  
   .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
   .switch input { opacity: 0; width: 0; height: 0; }
   .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #1a2635; transition: .4s; border-radius: 34px; border: 1px solid var(--line); }
@@ -176,7 +201,9 @@
         <span class="ton-diamond">T</span>
         <span id="balance">0.00</span>
       </div>
-      <button class="btn-icon" style="background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer;padding:5px;" onclick="openModal('settingsModal')">⚙️</button>
+      <button class="btn-icon" onclick="openModal('settingsModal')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </button>
     </div>
   </div>
 
@@ -202,9 +229,18 @@
     </div>
     
     <div class="mini-btns">
-      <button class="btn-mini" onclick="openWheel()"><span>🎡</span> Колесо</button>
-      <button class="btn-mini" onclick="openCollection()"><span>💼</span> Коллекция</button>
-      <button class="btn-mini" onclick="openModal('catalogModal')"><span>📖</span> Каталог</button>
+      <button class="btn-mini" onclick="openWheel()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v20M2 12h20"></path><path d="M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        Колесо
+      </button>
+      <button class="btn-mini" onclick="openCollection()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        Коллекция
+      </button>
+      <button class="btn-mini" onclick="openModal('catalogModal')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        Каталог
+      </button>
     </div>
   </div>
 
@@ -232,9 +268,18 @@
   </div>
 
   <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('home', this)"><div class="icon">🎰</div><span>Генератор</span></div>
-    <div class="nav-item" onclick="switchTab('tops', this)"><div class="icon">🏆</div><span>Топы</span></div>
-    <div class="nav-item" onclick="switchTab('profile', this)"><div class="icon">👤</div><span>Профиль</span></div>
+    <div class="nav-item active" onclick="switchTab('home', this)">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path></svg></div>
+      <span>Генератор</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('tops', this)">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></div>
+      <span>Топы</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('profile', this)">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+      <span>Профиль</span>
+    </div>
   </div>
 </div>
 
@@ -242,16 +287,27 @@
 <div class="modal" id="collectionModal">
   <div class="modal-backdrop" onclick="closeModal('collectionModal')"></div>
   <div class="modal-card">
-    <div class="modal-header"><h2>💼 Коллекция</h2><button class="modal-close" onclick="closeModal('collectionModal')">✕</button></div>
+    <div class="modal-header">
+      <h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> Коллекция</h2>
+      <button class="modal-close" onclick="closeModal('collectionModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
     <div class="modal-body" id="invList"></div>
-    <div style="padding:16px; border-top:1px solid var(--line);"><button class="btn-sell-all" id="sellAllBtn" onclick="sellAll()">💰 ПРОДАТЬ ВСЁ</button></div>
+    <div style="padding:16px; border-top:1px solid var(--line);">
+      <button class="btn-sell-all" id="sellAllBtn" onclick="sellAll()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+        ПРОДАТЬ ВСЁ
+      </button>
+    </div>
   </div>
 </div>
 
 <div class="modal" id="catalogModal">
   <div class="modal-backdrop" onclick="closeModal('catalogModal')"></div>
   <div class="modal-card">
-    <div class="modal-header"><h2>📖 Каталог</h2><button class="modal-close" onclick="closeModal('catalogModal')">✕</button></div>
+    <div class="modal-header">
+      <h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> Каталог</h2>
+      <button class="modal-close" onclick="closeModal('catalogModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
     <div class="modal-body" id="catalogBody"></div>
   </div>
 </div>
@@ -259,7 +315,10 @@
 <div class="modal" id="wheelModal">
   <div class="modal-backdrop" onclick="closeModal('wheelModal')"></div>
   <div class="modal-card">
-    <div class="modal-header"><h2>🎡 Колесо</h2><button class="modal-close" onclick="closeModal('wheelModal')">✕</button></div>
+    <div class="modal-header">
+      <h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v20M2 12h20"></path><path d="M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93"></path><circle cx="12" cy="12" r="3"></circle></svg> Колесо</h2>
+      <button class="modal-close" onclick="closeModal('wheelModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
     <div class="modal-body" style="align-items:center;">
       <div style="position:relative; width:260px; height:260px; margin:20px auto;">
         <div style="position:absolute;top:-15px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:35px solid #ff3b6b;z-index:10;"></div>
@@ -273,33 +332,44 @@
 <div class="modal" id="settingsModal">
   <div class="modal-backdrop" onclick="closeModal('settingsModal')"></div>
   <div class="modal-card">
-    <div class="modal-header"><h2>⚙️ Настройки</h2><button class="modal-close" onclick="closeModal('settingsModal')">✕</button></div>
+    <div class="modal-header">
+      <h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Настройки</h2>
+      <button class="modal-close" onclick="closeModal('settingsModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
     <div class="modal-body">
       <div class="setting-row">
         <div class="setting-info">
-          <div class="setting-title">Звуки</div>
-          <div class="setting-desc">Звуки генерации и побед</div>
+          <div class="setting-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg></div>
+          <div class="setting-text">
+            <div class="setting-title">Звуки</div>
+          </div>
         </div>
         <label class="switch"><input type="checkbox" id="setSound" onchange="toggleSetting('sound', this.checked)"><span class="slider"></span></label>
       </div>
       <div class="setting-row">
         <div class="setting-info">
-          <div class="setting-title">Вибрация</div>
-          <div class="setting-desc">Тактильный отклик телефона</div>
+          <div class="setting-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"></rect><path d="M9 9h6v6H9z"></path></svg></div>
+          <div class="setting-text">
+            <div class="setting-title">Вибрация</div>
+          </div>
         </div>
         <label class="switch"><input type="checkbox" id="setVibration" onchange="toggleSetting('vibration', this.checked)"><span class="slider"></span></label>
       </div>
       <div class="setting-row">
         <div class="setting-info">
-          <div class="setting-title">Сильные анимации</div>
-          <div class="setting-desc">Тряска экрана и частицы</div>
+          <div class="setting-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+          <div class="setting-text">
+            <div class="setting-title">Анимации</div>
+          </div>
         </div>
         <label class="switch"><input type="checkbox" id="setAnimations" onchange="toggleSetting('animations', this.checked)"><span class="slider"></span></label>
       </div>
       <div class="setting-row">
         <div class="setting-info">
-          <div class="setting-title">Оптимизация</div>
-          <div class="setting-desc">Отключает размытия для слабых устройств</div>
+          <div class="setting-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"></path><path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg></div>
+          <div class="setting-text">
+            <div class="setting-title">Оптимизация</div>
+          </div>
         </div>
         <label class="switch"><input type="checkbox" id="setLowEnd" onchange="toggleSetting('lowEnd', this.checked)"><span class="slider"></span></label>
       </div>
@@ -310,11 +380,12 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-    // 1. Инициализация
+    // 1. Инициализация Telegram
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.expand(); tg.setHeaderColor('#06090e'); tg.setBackgroundColor('#06090e'); }
     const user = tg?.initDataUnsafe?.user;
 
+    // 2. Настройки
     let settings = JSON.parse(localStorage.getItem('geners_settings')) || {
         sound: true, vibration: true, animations: true, lowEnd: false
     };
@@ -337,6 +408,7 @@
     }
     applySettings();
 
+    // 3. Звуки и Вибрация
     let audioCtx;
     function playSound(type) {
         if (!settings.sound) return;
@@ -369,7 +441,7 @@
         if (type === 'error') tg.HapticFeedback.notificationOccurred('error');
     }
 
-    // 2. База Данных
+    // 4. База Данных
     let supabaseClient = null;
     try {
         if (typeof supabase !== 'undefined') {
@@ -380,18 +452,35 @@
         }
     } catch(e) { console.log("Ошибка подключения:", e); }
 
-    // 3. Переменные
-    let myBalance = 5.00;
-    let myTotal = 0;
+    // 5. Данные (Защита от сброса баланса)
+    let gameData = {
+        balance: 5.00,
+        total: 0,
+        inventory: []
+    };
+
+    function loadLocalData() {
+        try {
+            const saved = localStorage.getItem('geners_data');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                gameData.balance = parseFloat(parsed.balance) || 5.00;
+                gameData.total = parseInt(parsed.total) || 0;
+                gameData.inventory = Array.isArray(parsed.inventory) ? parsed.inventory : [];
+            }
+        } catch(e) { console.error("Local storage error", e); }
+    }
+
+    function saveLocalData() {
+        try {
+            localStorage.setItem('geners_data', JSON.stringify(gameData));
+        } catch(e) { console.error("Local save error", e); }
+    }
+
     let myId = user ? user.id : 0;
     let myName = user ? user.first_name : 'Игрок';
     let myPhoto = user ? user.photo_url : null;
     let currentUsername = ''; 
-    
-    let localInventory = [];
-    try {
-        localInventory = JSON.parse(localStorage.getItem('geners_inv_v5')) || [];
-    } catch(e) {}
 
     if (user) {
         document.getElementById('tgName').textContent = myName;
@@ -409,14 +498,12 @@
         }
     }
 
-    // 4. UI Функции
+    // 6. UI Функции
     function updateUI() {
-        document.getElementById('balance').textContent = parseFloat(myBalance).toFixed(2);
-        document.getElementById('profBalance').textContent = parseFloat(myBalance).toFixed(2) + ' TON';
-        document.getElementById('profTotal').textContent = myTotal;
-        // Автосохранение в localStorage
-        localStorage.setItem('geners_balance', myBalance);
-        localStorage.setItem('geners_total', myTotal);
+        document.getElementById('balance').textContent = gameData.balance.toFixed(2);
+        document.getElementById('profBalance').textContent = gameData.balance.toFixed(2) + ' TON';
+        document.getElementById('profTotal').textContent = gameData.total;
+        saveLocalData();
     }
 
     function switchTab(tabId, el) {
@@ -455,16 +542,11 @@
 
     function fallbackCopy(text) {
         const textArea = document.createElement("textarea");
-        textArea.value = text;
-        document.body.appendChild(textArea);
+        textArea.value = text; document.body.appendChild(textArea);
         textArea.focus(); textArea.select();
         try {
-            document.execCommand('copy');
-            showToast('Скопировано: ' + text, '#3ddc84');
-            vibrate('success');
-        } catch (err) {
-            showToast('Ошибка копирования', '#ff3b6b');
-        }
+            document.execCommand('copy'); showToast('Скопировано: ' + text, '#3ddc84'); vibrate('success');
+        } catch (err) { showToast('Ошибка копирования', '#ff3b6b'); }
         document.body.removeChild(textArea);
     }
 
@@ -472,8 +554,7 @@
         const el = document.getElementById('priceFloat');
         el.classList.add('show');
         let start = 0;
-        const duration = 1000; 
-        const startTime = performance.now();
+        const duration = 1000; const startTime = performance.now();
         function update(currentTime) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
@@ -500,16 +581,13 @@
                 { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
                 { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0)`, opacity: 0 }
             ], { duration: 600 + Math.random()*400, easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)' });
-            anim.onfinish = () => p.remove();
-            wrap.appendChild(p);
+            anim.onfinish = () => p.remove(); wrap.appendChild(p);
         }
     }
 
-    // 5. СИНХРОНИЗАЦИЯ (Загрузка при старте)
+    // 7. СИНХРОНИЗАЦИЯ (Защита от сброса)
     async function syncUser() {
-        // Сначала берем локальные данные на случай, если сети нет
-        myBalance = parseFloat(localStorage.getItem('geners_balance')) || 5.00;
-        myTotal = parseInt(localStorage.getItem('geners_total')) || 0;
+        loadLocalData();
         updateUI();
 
         if (!supabaseClient || !myId) return;
@@ -518,45 +596,32 @@
             if (error && error.code !== 'PGRST116') throw error; 
             
             if (!data) {
-                // Создаем нового игрока
-                const { data: newUser } = await supabaseClient.from('users').insert([
-                    { id: myId, first_name: myName, photo_url: myPhoto, balance: myBalance, total_generated: myTotal }
-                ]).select().single();
+                await supabaseClient.from('users').insert([{ 
+                    id: myId, first_name: myName, photo_url: myPhoto, 
+                    balance: gameData.balance, total_generated: gameData.total 
+                }]);
             } else {
-                // Сверяем баланс: если в облаке больше, берем его. Если локально больше (офлайн), отправляем в облако.
-                if (parseFloat(data.balance) > myBalance) {
-                    myBalance = parseFloat(data.balance);
-                    myTotal = data.total_generated;
-                } else if (myBalance > parseFloat(data.balance)) {
-                    await supabaseClient.from('users').update({ balance: myBalance, total_generated: myTotal }).eq('id', myId);
+                const dbBalance = parseFloat(data.balance) || 0;
+                const dbTotal = parseInt(data.total_generated) || 0;
+
+                // Если в облаке больше, берем облако (например, зашел с другого телефона)
+                if (dbBalance > gameData.balance) {
+                    gameData.balance = dbBalance;
+                    gameData.total = dbTotal;
+                    saveLocalData();
+                } 
+                // Если локально больше (например, играл офлайн), обновляем облако
+                else if (gameData.balance > dbBalance) {
+                    await supabaseClient.from('users').update({ 
+                        balance: gameData.balance, total_generated: gameData.total 
+                    }).eq('id', myId);
                 }
             }
         } catch(e) { console.log("DB Error:", e); }
         updateUI();
     }
 
-    // 6. АВТОСЕЙВ (При закрытии/сворачивании)
-    async function forceSave() {
-        if (!supabaseClient || !myId) return;
-        try {
-            await supabaseClient.from('users').update({ balance: myBalance, total_generated: myTotal }).eq('id', myId);
-        } catch(e) {}
-    }
-
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'hidden') forceSave();
-    });
-    window.addEventListener('beforeunload', forceSave);
-
-    async function addBalance(amount) {
-        myBalance += amount;
-        updateUI();
-        if (supabaseClient && myId) {
-            try { await supabaseClient.from('users').update({ balance: myBalance }).eq('id', myId); } catch(e){}
-        }
-    }
-
-    // 7. Генерация
+    // 8. Генерация
     const RARITIES = [
       {id:'common',    name:'Обычный',     color:'#8b95a5', weight:4000, base:0.05,  maxBase:0.15,  penalty:0},
       {id:'uncommon',  name:'Необычный',   color:'#3ddc84', weight:2500, base:0.25,  maxBase:0.8,   penalty:4},
@@ -662,28 +727,31 @@
 
           const newItem = { id: 'local_' + Date.now(), username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale };
           
-          localInventory.push(newItem);
-          localStorage.setItem('geners_inv_v5', JSON.stringify(localInventory));
-          myTotal++;
+          gameData.inventory.push(newItem);
+          gameData.total++;
+          saveLocalData();
+          updateUI();
 
           if (supabaseClient && myId) {
-              supabaseClient.from('usernames').insert([{ 
-                  user_id: myId, username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale 
-              }]).then(() => {
-                  return supabaseClient.from('users').update({ total_generated: myTotal }).eq('id', myId);
-              }).catch(e => console.log("DB Save error:", e));
+              (async () => {
+                  try {
+                      await supabaseClient.from('usernames').insert([{ 
+                          user_id: myId, username: finalName, rarity_name: rarity.name, rarity_color: rarity.color, price: sale 
+                      }]);
+                      await supabaseClient.from('users').update({ total_generated: gameData.total }).eq('id', myId);
+                  } catch(e) { console.log("Фоновое сохранение не удалось"); }
+              })();
           }
-          updateUI();
       } catch(e) { console.error(e); } finally { genBtn.disabled = false; }
     }
 
-    // 8. Коллекция
+    // 9. Коллекция
     let isSelling = false;
     async function openCollection() {
         openModal('collectionModal');
         const list = document.getElementById('invList');
         list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>';
-        let data = [...localInventory];
+        let data = [...gameData.inventory];
 
         if (supabaseClient && myId) {
             try {
@@ -708,7 +776,9 @@
                     <div style="font-size:11px; color:var(--muted); margin-top:4px; font-weight:800;">${item.rarity_name}</div>
                 </div>
                 <div style="font-size:15px; font-weight:900; color:var(--gold); margin-right:12px;">${price.toFixed(2)} T</div>
-                <button class="mc-sell" onclick="sellItem('${item.id}', ${price})">💵</button>
+                <button class="mc-sell" onclick="sellItem('${item.id}', ${price})">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+                </button>
             </div>`;
         }).join('');
     }
@@ -717,11 +787,20 @@
         if (isSelling) return; isSelling = true; vibrate('light');
         try {
             if (id.toString().startsWith('local_')) {
-                localInventory = localInventory.filter(i => i.id !== id);
-                localStorage.setItem('geners_inv_v5', JSON.stringify(localInventory));
+                gameData.inventory = gameData.inventory.filter(i => i.id !== id);
             } else if (supabaseClient && myId) { await supabaseClient.from('usernames').delete().eq('id', id); }
-            await addBalance(price);
+            
+            gameData.balance += price;
+            saveLocalData();
+            updateUI();
+            
             showToast(`Продано за +${price.toFixed(2)} TON`, '#3ddc84');
+            
+            if (supabaseClient && myId) {
+                (async () => {
+                    try { await supabaseClient.from('users').update({ balance: gameData.balance }).eq('id', myId); } catch(e){}
+                })();
+            }
             openCollection();
         } catch(e) { showToast('Ошибка продажи', '#ff3b6b'); } finally { isSelling = false; }
     }
@@ -738,18 +817,30 @@
                     await supabaseClient.from('usernames').delete().eq('user_id', myId);
                 }
             }
-            if(localInventory.length > 0) {
-                tot += localInventory.reduce((s,i)=>s+parseFloat(i.price),0);
-                localInventory = []; localStorage.setItem('geners_inv_v5', JSON.stringify([]));
+            if(gameData.inventory.length > 0) {
+                tot += gameData.inventory.reduce((s,i)=>s+parseFloat(i.price),0);
+                gameData.inventory = [];
             }
-            if(tot > 0) { await addBalance(tot); showToast(`Всё продано! +${tot.toFixed(2)} TON`, '#3ddc84'); }
+            
+            if(tot > 0) { 
+                gameData.balance += tot;
+                saveLocalData();
+                updateUI();
+                showToast(`Всё продано! +${tot.toFixed(2)} TON`, '#3ddc84'); 
+                
+                if (supabaseClient && myId) {
+                    (async () => {
+                        try { await supabaseClient.from('users').update({ balance: gameData.balance }).eq('id', myId); } catch(e){}
+                    })();
+                }
+            }
             closeModal('collectionModal');
         } catch(e) { showToast('Ошибка', '#ff3b6b'); } finally {
-            isSelling = false; btn.disabled = false; btn.textContent = '💰 ПРОДАТЬ ВСЁ';
+            isSelling = false; btn.disabled = false; btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg> ПРОДАТЬ ВСЁ';
         }
     }
 
-    // 9. Топы
+    // 10. Топы
     async function loadLeaderboard() {
         const list = document.getElementById('leaderboardList');
         list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка топов...</div>';
@@ -773,7 +864,7 @@
         } catch(e) { list.innerHTML = '<div style="text-align:center; padding:20px; color:#ff3b6b; font-weight:800;">Ошибка загрузки</div>'; }
     }
 
-    // 10. Каталог
+    // 11. Каталог
     function renderCatalog() {
         document.getElementById('catalogBody').innerHTML = RARITIES.map(r => `
             <div class="cat-item" style="border-left-color:${r.color}">
@@ -783,7 +874,7 @@
     }
     renderCatalog();
 
-    // 11. Колесо (Больше ПУСТО)
+    // 12. Колесо (Больше ПУСТО)
     const WHEEL_PRIZES = [
       { label: 'ПУСТО', type: 'none', value: 0, color: '#222' },
       { label: '10 TON', type: 'ton', value: 10, color: '#3b9eff' },
@@ -848,8 +939,15 @@
             const prize = WHEEL_PRIZES[index];
 
             if (prize.type === 'ton') {
-                await addBalance(prize.value); showToast(`Выигрыш: ${prize.value} TON!`, '#ffcf4d');
+                gameData.balance += prize.value;
+                saveLocalData(); updateUI();
+                showToast(`Выигрыш: ${prize.value} TON!`, '#ffcf4d');
                 playSound('win'); vibrate('success');
+                if (supabaseClient && myId) {
+                    (async () => {
+                        try { await supabaseClient.from('users').update({ balance: gameData.balance }).eq('id', myId); } catch(e){}
+                    })();
+                }
             } else if (prize.type === 'mult') {
                 showToast(`Выигрыш: x2 Множитель!`, '#ff3b6b');
                 playSound('win'); vibrate('success');
