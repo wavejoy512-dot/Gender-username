@@ -66,7 +66,7 @@
   .stat.read .stat-fill{background:#2aabee; color: #2aabee;}
   .stat.liq .stat-fill{background:#3ddc84; color: #3ddc84;}
 
-  /* НОВЫЙ КОШЕЛЕК */
+  /* КОШЕЛЕК */
   .wallet-card { 
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
     border-radius: 20px; padding: 20px; 
@@ -508,7 +508,7 @@
         if (supabaseClient && myId) supabaseClient.from('users').update({ balance: gameData.balance }).eq('id', myId);
     }
 
-    // 8. ТРЕЙДЫ (ПОФИКШЕНО)
+    // 8. ТРЕЙДЫ
     async function openNewTradeModal() {
         const select = document.getElementById('tradeSelectItem');
         select.innerHTML = '';
@@ -573,7 +573,6 @@
         }
     }
 
-    // Быстрый трейд из кошелька (открывает модалку)
     function quickTrade(id, username) {
         openNewTradeModal();
         setTimeout(() => {
@@ -589,6 +588,7 @@
         if (!supabaseClient || !myId) return;
 
         try {
+            // Загружаем заявки
             const { data: trades, error } = await supabaseClient.from('trades')
                 .select('id, sender_id, item_id')
                 .eq('receiver_id', myId).eq('status', 'pending');
@@ -596,22 +596,28 @@
             if (error) throw error;
             if (!trades || trades.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Нет новых обменов</div>'; return; }
 
-            const senderIds = [...new Set(trades.map(t => t.sender_id))];
-            const itemIds = trades.map(t => t.item_id);
-
-            const { data: users } = await supabaseClient.from('users').select('id, first_name').in('id', senderIds);
-            const { data: items } = await supabaseClient.from('usernames').select('id, username, rarity_color, price').in('id', itemIds);
-
             let html = '';
-            trades.forEach(t => {
-                const sender = users?.find(u => u.id === t.sender_id) || { first_name: 'Игрок' };
-                const item = items?.find(i => i.id === t.item_id);
-                if (!item) return; // Если юз удален
+
+            // Проходимся по каждой заявке ОТДЕЛЬНО (чтобы ошибка в одной не ломала всё)
+            for (let t of trades) {
+                let senderName = 'Игрок';
+                try {
+                    const { data: senderData } = await supabaseClient.from('users').select('first_name').eq('id', t.sender_id).single();
+                    if (senderData) senderName = senderData.first_name;
+                } catch(e) {}
+
+                let item = null;
+                try {
+                    const { data: itemData } = await supabaseClient.from('usernames').select('username, rarity_color, price').eq('id', t.item_id).single();
+                    if (itemData) item = itemData;
+                } catch(e) {}
+
+                if (!item) continue; // Если юз удален, пропускаем
 
                 html += `
                 <div class="trade-item">
                     <div class="trade-header">
-                        <span>От: <b>${sender.first_name}</b> (ID: ${t.sender_id})</span>
+                        <span>От: <b>${senderName}</b> (ID: ${t.sender_id})</span>
                     </div>
                     <div class="trade-body">
                         <div style="font-family:monospace; font-size:16px; font-weight:900; color:${item.rarity_color}">@${item.username}</div>
@@ -622,14 +628,15 @@
                         <button class="trade-btn accept" onclick="processTrade(${t.id}, ${t.item_id}, 'accepted')">Принять</button>
                     </div>
                 </div>`;
-            });
+            }
 
             if(html === '') list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Нет новых обменов</div>';
             else list.innerHTML = html;
 
         } catch(e) { 
             console.error("Trade Load Error:", e);
-            list.innerHTML = '<div style="text-align:center;color:#ff3b6b;padding:20px; font-weight:800;">Ошибка загрузки</div>'; 
+            // ПОКАЗЫВАЕМ ТОЧНУЮ ОШИБКУ, ЕСЛИ ЧТО-ТО СЛОМАЛОСЬ
+            list.innerHTML = `<div style="text-align:center;color:#ff3b6b;padding:20px; font-weight:800;">Ошибка: ${e.message || 'Неизвестная ошибка'}</div>`; 
         }
     }
 
