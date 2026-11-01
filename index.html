@@ -54,7 +54,7 @@
   .rarity-tag{align-self:center; padding:8px 20px; border-radius:20px; font-weight:900; font-size:14px; text-transform:uppercase; opacity:0; transform:translateY(-10px); transition:all .3s; z-index: 2;}
   .rarity-tag.show{opacity:1; transform:translateY(0);}
   
-  .btn-gen{width:100%; padding:18px; border:none; border-radius:18px; font-size:18px; font-weight:900; color:#03121c; background:linear-gradient(180deg,#7ce0ff,#2aabee); box-shadow:0 6px 0 #0e4a70; transition:all .15s; font-family: 'Manrope', sans-serif;}
+  .btn-gen{width:100%; padding:18px; border:none; border-radius:18px; font-size:16px; font-weight:900; color:#03121c; background:linear-gradient(180deg,#7ce0ff,#2aabee); box-shadow:0 6px 0 #0e4a70; transition:all .15s; font-family: 'Manrope', sans-serif;}
   .btn-gen:active:not(:disabled){transform:translateY(4px); box-shadow:0 2px 0 #0e4a70;}
   .btn-gen:disabled{opacity:0.7; cursor:not-allowed; filter:grayscale(0.5); transform:translateY(4px); box-shadow:0 2px 0 #0e4a70;}
 
@@ -69,18 +69,14 @@
   /* НОВЫЙ КОШЕЛЕК */
   .wallet-card { 
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
-    border-radius: 24px; padding: 24px; 
-    box-shadow: 0 15px 35px rgba(42, 82, 152, 0.4), inset 0 1px 0 rgba(255,255,255,0.2); 
-    position: relative; overflow: hidden; margin-top: 10px;
+    border-radius: 20px; padding: 20px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2); 
+    position: relative; margin-top: 10px;
     display: flex; flex-direction: column; gap: 5px;
   }
-  .wallet-card::before {
-    content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px;
-    background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(30px);
-  }
-  .wallet-title { font-size: 12px; font-weight: 800; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; }
-  .wallet-balance { font-size: 36px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-  .wallet-assets { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,0.9); margin-top: 10px; width: fit-content;}
+  .wallet-title { font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; }
+  .wallet-balance { font-size: 32px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+  .wallet-assets { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,0.9); margin-top: 5px; width: fit-content;}
   
   .mc-item{display:flex; align-items:center; justify-content:space-between; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px; border-left-width:4px; margin-bottom:8px;}
   .mc-name{font-family:monospace;font-size:15px;font-weight:900;word-break:break-all;}
@@ -91,14 +87,6 @@
   .btn-trade { background:rgba(42,171,238,0.15); color:var(--accent); }
   .btn-trade:active { background:var(--accent); color:#03121c; }
 
-  /* НОВЫЙ КАТАЛОГ */
-  .cat-item { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); margin-bottom: 8px;}
-  .cat-color-box { width: 12px; height: 40px; border-radius: 6px; }
-  .cat-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-  .cat-name { font-weight: 900; font-size: 15px; }
-  .cat-chance { font-size: 11px; color: var(--muted); font-weight: 700; }
-  .cat-price { font-family: ui-monospace, monospace; font-weight: 900; color: var(--gold); font-size: 14px; text-align: right;}
-  
   /* ТОПЫ */
   .leaderboard{display:flex; flex-direction:column; gap:10px;}
   .lb-item{display:flex; align-items:center; gap:12px; padding:14px; border-radius:18px; background:var(--card); border:1px solid var(--line);}
@@ -215,8 +203,8 @@
   <!-- КОШЕЛЕК -->
   <div class="content" id="tab-wallet">
     <div class="wallet-card">
-      <div class="wallet-title">Баланс кошелька</div>
-      <div class="wallet-balance"><span id="walletBalance">0.00</span> <span class="ton-diamond" style="width:28px; height:28px; font-size:16px;">T</span></div>
+      <div class="wallet-title">Ваш баланс</div>
+      <div class="wallet-balance"><span id="walletBalance">0.00</span> <span class="ton-diamond" style="width:24px; height:24px; font-size:14px;">T</span></div>
       <div class="wallet-assets">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
         Активов: <span id="walletTotal">0</span>
@@ -228,7 +216,13 @@
 
   <!-- ТРЕЙДЫ -->
   <div class="content" id="tab-trades">
-    <h2 style="font-size:22px; font-weight:900; margin-top:10px;">📬 Входящие обмены</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+        <h2 style="font-size:22px; font-weight:900;">📬 Обмены</h2>
+        <button class="btn-icon" onclick="openNewTradeModal()" style="background:var(--accent); border-radius:12px; color:#03121c;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+    </div>
+    <p style="font-size:12px; color:var(--muted); font-weight:600; margin-bottom:10px;">Нажмите на плюс, чтобы отправить юз по ID.</p>
     <div class="leaderboard" id="tradesList">
       <div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>
     </div>
@@ -253,7 +247,7 @@
     </div>
   </div>
 
-  <!-- НИЖНЕЕ МЕНЮ -->
+  <!-- МЕНЮ -->
   <div class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('home', this)">
       <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path></svg></div>
@@ -274,31 +268,32 @@
   </div>
 </div>
 
-<!-- МОДАЛКИ -->
-<div class="modal" id="catalogModal">
-  <div class="modal-backdrop" onclick="closeModal('catalogModal')"></div>
+<!-- МОДАЛКА СОЗДАНИЯ ТРЕЙДА ПО ID -->
+<div class="modal" id="newTradeModal">
+  <div class="modal-backdrop" onclick="closeModal('newTradeModal')"></div>
   <div class="modal-card">
-    <div class="modal-header"><h2>📖 Каталог редкостей</h2><button class="modal-close" onclick="closeModal('catalogModal')">✕</button></div>
-    <div class="modal-body" id="catalogBody"></div>
-  </div>
-</div>
-
-<div class="modal" id="sendTradeModal">
-  <div class="modal-backdrop" onclick="closeModal('sendTradeModal')"></div>
-  <div class="modal-card">
-    <div class="modal-header"><h2>Отправить юз</h2><button class="modal-close" onclick="closeModal('sendTradeModal')">✕</button></div>
+    <div class="modal-header"><h2>Отправить обмен</h2><button class="modal-close" onclick="closeModal('newTradeModal')">✕</button></div>
     <div class="modal-body">
-      <p style="font-size:13px; color:var(--muted); font-weight:600;">Введите Telegram ID друга, чтобы отправить ему этот юз.</p>
-      <div style="background:var(--card); padding:12px; border-radius:12px; border:1px solid var(--line); margin-bottom:10px;">
-        <div style="font-size:11px; color:var(--muted); font-weight:800;">ВЫ ОТПРАВЛЯЕТЕ:</div>
-        <div id="tradeItemName" style="font-family:monospace; font-size:16px; font-weight:900; color:var(--gold);">@username</div>
+      <p style="font-size:13px; color:var(--muted); font-weight:600;">Выберите юз из своего кошелька и введите Telegram ID друга.</p>
+      
+      <div style="background:var(--card); padding:12px; border-radius:12px; border:1px solid var(--line);">
+        <div style="font-size:11px; color:var(--muted); font-weight:800; margin-bottom:6px;">ВЫБЕРИТЕ ЮЗ:</div>
+        <select id="tradeSelectItem" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); background:#080d13; color:#fff; font-size:14px; font-weight:800; outline:none;">
+            <!-- Опции заполнятся через JS -->
+        </select>
       </div>
-      <input type="number" id="tradeReceiverId" placeholder="Telegram ID (например, 8314037736)" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--line); background:#080d13; color:#fff; font-size:16px; font-weight:800; outline:none;">
-      <button class="btn-gen" style="margin-top:15px; font-size:16px; padding:14px;" onclick="submitTrade()">ОТПРАВИТЬ</button>
+
+      <div style="background:var(--card); padding:12px; border-radius:12px; border:1px solid var(--line);">
+        <div style="font-size:11px; color:var(--muted); font-weight:800; margin-bottom:6px;">ID ПОЛУЧАТЕЛЯ:</div>
+        <input type="number" id="tradeReceiverId" placeholder="Например: 8314037736" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); background:#080d13; color:#fff; font-size:14px; font-weight:800; outline:none;">
+      </div>
+
+      <button class="btn-gen" style="margin-top:15px; font-size:16px; padding:14px;" onclick="submitNewTrade()">ОТПРАВИТЬ</button>
     </div>
   </div>
 </div>
 
+<!-- НАСТРОЙКИ -->
 <div class="modal" id="settingsModal">
   <div class="modal-backdrop" onclick="closeModal('settingsModal')"></div>
   <div class="modal-card">
@@ -362,7 +357,6 @@
     let myName = user ? user.first_name : 'Игрок';
     let myPhoto = user ? user.photo_url : null;
     let currentUsername = ''; 
-    let currentTradeItemId = 0;
 
     let gameData = { balance: 5.00, total: 0, inventory: [] };
     function loadData() { try { const s = localStorage.getItem('geners_data'); if(s) { const p = JSON.parse(s); gameData.balance = p.balance !== undefined ? parseFloat(p.balance) : 5.00; gameData.total = p.total !== undefined ? parseInt(p.total) : 0; gameData.inventory = Array.isArray(p.inventory) ? p.inventory : []; } } catch(e){} }
@@ -481,7 +475,7 @@
       } catch(e) {} finally { genBtn.disabled = false; }
     }
 
-    // 7. Кошелек (ИСПРАВЛЕН)
+    // 7. Кошелек
     async function loadWallet() {
         const list = document.getElementById('walletList'); list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>';
         let data = [...gameData.inventory];
@@ -500,7 +494,7 @@
                 <button class="btn-action btn-sell" onclick="sellItem('${item.id}', ${item.price})">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
                 </button>
-                <button class="btn-action btn-trade" onclick="openTradeModal('${item.id}', '${item.username}')">
+                <button class="btn-action btn-trade" onclick="quickTrade('${item.id}', '${item.username}')">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
                 </button>
             </div>`).join('');
@@ -514,46 +508,80 @@
         if (supabaseClient && myId) supabaseClient.from('users').update({ balance: gameData.balance }).eq('id', myId);
     }
 
-    // 8. ТРЕЙДЫ
-    function openTradeModal(itemId, username) {
-        currentTradeItemId = itemId;
-        document.getElementById('tradeItemName').textContent = '@' + username;
+    // 8. ТРЕЙДЫ (ПОФИКШЕНО)
+    async function openNewTradeModal() {
+        const select = document.getElementById('tradeSelectItem');
+        select.innerHTML = '';
+        
+        let data = [...gameData.inventory];
+        if (supabaseClient && myId) {
+            try { const res = await supabaseClient.from('usernames').select('id, username, price').eq('user_id', myId); if(res.data) data = [...data, ...res.data]; } catch(e){}
+        }
+        
+        if(data.length === 0) { showToast('У вас нет юзов для обмена', '#ff3b6b'); return; }
+
+        data.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.id;
+            opt.textContent = `@${item.username} (${parseFloat(item.price).toFixed(2)} T)`;
+            select.appendChild(opt);
+        });
+
         document.getElementById('tradeReceiverId').value = '';
-        openModal('sendTradeModal');
+        openModal('newTradeModal');
     }
 
-    async function submitTrade() {
+    async function submitNewTrade() {
+        const itemId = document.getElementById('tradeSelectItem').value;
         const receiverIdStr = document.getElementById('tradeReceiverId').value.trim();
+        
+        if (!itemId) { showToast('Выберите юз', '#ff3b6b'); return; }
         if (!receiverIdStr || isNaN(receiverIdStr)) { showToast('Введите корректный ID', '#ff3b6b'); return; }
         const receiverId = parseInt(receiverIdStr);
         if (receiverId === myId) { showToast('Нельзя отправить самому себе', '#ff3b6b'); return; }
         if (!supabaseClient) { showToast('Нет связи с сервером', '#ff3b6b'); return; }
 
         try {
-            const btn = document.querySelector('#sendTradeModal button');
+            const btn = document.querySelector('#newTradeModal button');
             btn.disabled = true; btn.textContent = 'ОТПРАВКА...';
 
             let { data: u } = await supabaseClient.from('users').select('id').eq('id', receiverId).single();
             if (!u) { showToast('Игрок с таким ID не найден', '#ff3b6b'); btn.disabled = false; btn.textContent = 'ОТПРАВИТЬ'; return; }
 
-            if (currentTradeItemId.toString().startsWith('local_')) {
-                const invItem = gameData.inventory.find(i => i.id === currentTradeItemId);
-                const { data: newDbItem } = await supabaseClient.from('usernames').insert([{ 
+            if (itemId.toString().startsWith('local_')) {
+                const invItem = gameData.inventory.find(i => i.id === itemId);
+                const { data: newDbItem, error } = await supabaseClient.from('usernames').insert([{ 
                     user_id: myId, username: invItem.username, rarity_name: invItem.rarity_name, rarity_color: invItem.rarity_color, price: invItem.price 
                 }]).select().single();
                 
+                if (error) throw error;
                 await supabaseClient.from('trades').insert([{ sender_id: myId, receiver_id: receiverId, item_id: newDbItem.id }]);
-                gameData.inventory = gameData.inventory.filter(i => i.id !== currentTradeItemId);
+                gameData.inventory = gameData.inventory.filter(i => i.id !== itemId);
                 saveData();
             } else {
-                await supabaseClient.from('trades').insert([{ sender_id: myId, receiver_id: receiverId, item_id: parseInt(currentTradeItemId) }]);
+                await supabaseClient.from('trades').insert([{ sender_id: myId, receiver_id: receiverId, item_id: parseInt(itemId) }]);
             }
 
             showToast('Заявка отправлена!', '#3ddc84');
-            closeModal('sendTradeModal');
+            closeModal('newTradeModal');
             loadWallet();
-        } catch(e) { showToast('Ошибка отправки', '#ff3b6b'); } 
-        finally { const btn = document.querySelector('#sendTradeModal button'); btn.disabled = false; btn.textContent = 'ОТПРАВИТЬ'; }
+        } catch(e) { 
+            console.error(e);
+            showToast('Ошибка отправки', '#ff3b6b'); 
+        } finally { 
+            const btn = document.querySelector('#newTradeModal button'); btn.disabled = false; btn.textContent = 'ОТПРАВИТЬ'; 
+        }
+    }
+
+    // Быстрый трейд из кошелька (открывает модалку)
+    function quickTrade(id, username) {
+        openNewTradeModal();
+        setTimeout(() => {
+            const select = document.getElementById('tradeSelectItem');
+            for(let i=0; i<select.options.length; i++) {
+                if(select.options[i].value === id) { select.selectedIndex = i; break; }
+            }
+        }, 100);
     }
 
     async function loadTrades() {
@@ -566,7 +594,7 @@
                 .eq('receiver_id', myId).eq('status', 'pending');
 
             if (error) throw error;
-            if (!trades || trades.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">У вас нет новых обменов</div>'; return; }
+            if (!trades || trades.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Нет новых обменов</div>'; return; }
 
             const senderIds = [...new Set(trades.map(t => t.sender_id))];
             const itemIds = trades.map(t => t.item_id);
@@ -574,12 +602,13 @@
             const { data: users } = await supabaseClient.from('users').select('id, first_name').in('id', senderIds);
             const { data: items } = await supabaseClient.from('usernames').select('id, username, rarity_color, price').in('id', itemIds);
 
-            list.innerHTML = trades.map(t => {
+            let html = '';
+            trades.forEach(t => {
                 const sender = users?.find(u => u.id === t.sender_id) || { first_name: 'Игрок' };
                 const item = items?.find(i => i.id === t.item_id);
-                if (!item) return ''; 
+                if (!item) return; // Если юз удален
 
-                return `
+                html += `
                 <div class="trade-item">
                     <div class="trade-header">
                         <span>От: <b>${sender.first_name}</b> (ID: ${t.sender_id})</span>
@@ -593,9 +622,13 @@
                         <button class="trade-btn accept" onclick="processTrade(${t.id}, ${t.item_id}, 'accepted')">Принять</button>
                     </div>
                 </div>`;
-            }).join('');
+            });
+
+            if(html === '') list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Нет новых обменов</div>';
+            else list.innerHTML = html;
+
         } catch(e) { 
-            console.error(e);
+            console.error("Trade Load Error:", e);
             list.innerHTML = '<div style="text-align:center;color:#ff3b6b;padding:20px; font-weight:800;">Ошибка загрузки</div>'; 
         }
     }
@@ -624,7 +657,7 @@
             const data = res.data || [];
             
             if (data.length === 0) { 
-                list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Пока нет игроков<br>Пригласи друзей!</div>'; 
+                list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Пока нет игроков</div>'; 
                 return; 
             }
             
@@ -640,24 +673,9 @@
                 </div>`;
             }).join('');
         } catch(e) { 
-            console.error("Leaderboard Error:", e);
             list.innerHTML = '<div style="text-align:center; padding:20px; color:#ff3b6b; font-weight:800;">Ошибка загрузки</div>'; 
         }
     }
-
-    // 10. КАТАЛОГ (НОВЫЙ ДИЗАЙН)
-    function renderCatalog() {
-        document.getElementById('catalogBody').innerHTML = RARITIES.map(r => `
-            <div class="cat-item">
-                <div class="cat-color-box" style="background:${r.color}; box-shadow: 0 0 10px ${r.color}66;"></div>
-                <div class="cat-info">
-                    <div class="cat-name" style="color:${r.color}">${r.name}</div>
-                    <div class="cat-chance">Шанс: ${r.chance}</div>
-                </div>
-                <div class="cat-price">от ${r.base} T</div>
-            </div>`).join('');
-    }
-    renderCatalog();
 
     // Старт
     document.getElementById('genBtn').addEventListener('click', generate);
