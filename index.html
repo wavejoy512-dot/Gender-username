@@ -14,15 +14,17 @@
     --txt: #ffffff; --muted: #8b9bad; --accent: #2aabee; --gold: #ffd700; --silver: #c0c0c0; --bronze: #cd7f32;
     --nav-bg: rgba(10,15,22,0.95); 
   }
+  body.low-end .orb { display: none; }
+  body.low-end .card, body.low-end .modal-backdrop, body.low-end .bottom-nav { backdrop-filter: none !important; }
+  body.low-end .btn-gen::before { display: none; }
+  body.low-end .shake-screen { animation: none !important; }
+  body.low-end .particle { display: none !important; }
+  body.low-end .modal-backdrop { background: rgba(0,0,0,0.95); }
   html,body { height:100%; width:100%; overflow:hidden; font-family: 'Manrope', system-ui, sans-serif; background: var(--bg); color:var(--txt); display:flex; flex-direction:column; user-select:none; }
-  
   .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.3;pointer-events:none;z-index:0;}
   .orb.a{width:300px;height:300px;background:#2aabee;top:-100px;left:-100px}
   .orb.b{width:250px;height:250px;background:#b06dff;bottom:-50px;right:-50px}
-
   .app{flex:1; display:flex; flex-direction:column; width:100%; max-width:480px; margin:0 auto; position:relative; z-index:1; height:100dvh;}
-  
-  /* ШАПКА */
   .topbar{display:flex; align-items:center; justify-content:space-between; padding:12px 16px; padding-top: calc(12px + env(safe-area-inset-top)); gap:10px;}
   .user-profile{display:flex;align-items:center;gap:10px; cursor:pointer; flex:1; overflow: hidden;}
   .avatar{width:38px;height:38px; min-width: 38px; border-radius:50%;background:linear-gradient(135deg,#2aabee,#b06dff);display:grid;place-items:center;font-weight:900;color:#fff;border:2px solid var(--line);background-size:cover;background-position:center; font-size: 16px;}
@@ -30,16 +32,11 @@
   .top-actions{display:flex;gap:8px;align-items:center}
   .balance{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:14px;font-weight:900;font-size:15px;background:var(--card);border:1px solid var(--line); box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
   .ton-diamond{width:18px;height:18px;display:inline-grid;place-items:center;background:linear-gradient(135deg,#0098ea,#7ce0ff);border-radius:50%;color:#03141f;font-size:11px;font-weight:900;}
-  
   .btn-icon{background:transparent;border:none;color:#fff;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;transition:0.2s;}
-
   .content{flex:1; overflow-y:auto; padding: 0 16px 20px; display:none; flex-direction:column; gap:16px;}
   .content.active{display:flex; animation: slideUpFade 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);}
   @keyframes slideUpFade{from{opacity:0; transform:translateY(15px)}to{opacity:1; transform:none}}
-
   .card{background:var(--card); border:1px solid var(--line); border-radius:24px; padding:18px; display:flex; flex-direction:column; gap:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);}
-  
-  /* ДИСПЛЕЙ */
   .display-wrap{position:relative; height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:20px; overflow:hidden; background:#080d13; border:1px solid #1a2635; box-shadow: inset 0 10px 30px rgba(0,0,0,0.8); cursor: pointer; transition: transform 0.1s;}
   .display-wrap:active { transform: scale(0.98); }
   .copy-hint { position: absolute; bottom: 8px; font-size: 10px; color: var(--muted); font-weight: 800; opacity: 0; transition: opacity 0.3s; z-index: 2;}
@@ -47,17 +44,13 @@
   .price-float { position: absolute; top: 12px; right: 12px; background: linear-gradient(180deg, #2a1f0d, #1a1306); border: 1px solid #4d3b1a; border-radius: 10px; padding: 5px 12px; font-family: ui-monospace, monospace; font-size: 15px; font-weight: 900; color: var(--gold); opacity: 0; transform: translateY(-10px); transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.6);}
   .price-float.show { opacity: 1; transform: translateY(0); }
   .display{font-family:ui-monospace,monospace; font-size:clamp(26px,8vw,38px); font-weight:900; color:var(--txt); word-break:break-all; transition:all .3s; z-index: 2; user-select: all; text-align: center; padding: 0 10px;}
-  
   @keyframes dropIn { 0% { transform: translateY(-100px) scale(0.5); opacity: 0; filter: blur(10px); } 70% { transform: translateY(5px) scale(1.1); opacity: 1; filter: blur(0); } 100% { transform: translateY(0) scale(1); } }
   .display.pop-anim { animation: dropIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-  
   .rarity-tag{align-self:center; padding:8px 20px; border-radius:20px; font-weight:900; font-size:14px; text-transform:uppercase; opacity:0; transform:translateY(-10px); transition:all .3s; z-index: 2;}
   .rarity-tag.show{opacity:1; transform:translateY(0);}
-  
   .btn-gen{width:100%; padding:18px; border:none; border-radius:18px; font-size:16px; font-weight:900; color:#03121c; background:linear-gradient(180deg,#7ce0ff,#2aabee); box-shadow:0 6px 0 #0e4a70; transition:all .15s; font-family: 'Manrope', sans-serif;}
   .btn-gen:active:not(:disabled){transform:translateY(4px); box-shadow:0 2px 0 #0e4a70;}
   .btn-gen:disabled{opacity:0.7; cursor:not-allowed; filter:grayscale(0.5); transform:translateY(4px); box-shadow:0 2px 0 #0e4a70;}
-
   .stats{display:flex;flex-direction:column;gap:10px;transition:all .4s ease; opacity: 0; transform: translateY(10px);}
   .stats.show { opacity: 1; transform: translateY(0); }
   .stat-head{display:flex;justify-content:space-between;font-size:12px;font-weight:900;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
@@ -65,29 +58,17 @@
   .stat-fill{height:100%;width:0;border-radius:4px;transition:width 0.8s; box-shadow: 0 0 10px currentColor;}
   .stat.read .stat-fill{background:#2aabee; color: #2aabee;}
   .stat.liq .stat-fill{background:#3ddc84; color: #3ddc84;}
-
-  /* КОШЕЛЕК */
-  .wallet-card { 
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
-    border-radius: 20px; padding: 20px; 
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2); 
-    position: relative; margin-top: 10px;
-    display: flex; flex-direction: column; gap: 5px;
-  }
+  .wallet-card { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2); position: relative; margin-top: 10px; display: flex; flex-direction: column; gap: 5px;}
   .wallet-title { font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; }
   .wallet-balance { font-size: 32px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
   .wallet-assets { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,0.9); margin-top: 5px; width: fit-content;}
-  
   .mc-item{display:flex; align-items:center; justify-content:space-between; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px; border-left-width:4px; margin-bottom:8px;}
   .mc-name{font-family:monospace;font-size:15px;font-weight:900;word-break:break-all;}
-  
   .btn-action { width: 40px; height: 40px; border-radius: 12px; border:none; font-weight:900; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: 0.2s; margin-left: 6px;}
   .btn-sell { background:rgba(255,215,0,0.15); color:var(--gold); }
   .btn-sell:active { background:var(--gold); color:#000; }
   .btn-trade { background:rgba(42,171,238,0.15); color:var(--accent); }
   .btn-trade:active { background:var(--accent); color:#03121c; }
-
-  /* ТОПЫ */
   .leaderboard{display:flex; flex-direction:column; gap:10px;}
   .lb-item{display:flex; align-items:center; gap:12px; padding:14px; border-radius:18px; background:var(--card); border:1px solid var(--line);}
   .lb-rank{font-size:18px; font-weight:900; width:28px; text-align:center; color:var(--muted);}
@@ -97,8 +78,6 @@
   .lb-avatar{width:38px; height:38px; border-radius:50%; background:#333; background-size:cover; background-position:center; display:grid; place-items:center; font-weight:900; color:#fff; font-size:16px;}
   .lb-name{flex:1; font-weight:900; font-size:15px;}
   .lb-bal{font-family:ui-monospace,monospace; font-weight:900; color:var(--gold); font-size: 15px;}
-
-  /* ТРЕЙДЫ */
   .trade-item { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px;}
   .trade-header { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); font-weight: 800; }
   .trade-body { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; }
@@ -106,9 +85,7 @@
   .trade-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: 900; cursor: pointer; }
   .trade-btn.accept { background: #3ddc84; color: #03121c; }
   .trade-btn.decline { background: #ff3b6b; color: #fff; }
-
-  /* ПРОФИЛЬ */
-  .profile-header{display:flex; flex-direction:column; align-items:center; gap:12px; margin:20px 0;}
+  .profile-header{display:flex; flex-direction:column; align-items:center; gap:12px; margin:20px 0; position: relative;}
   .profile-avatar{width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,#2aabee,#b06dff); display:grid; place-items:center; font-size:36px; font-weight:900; color:#fff; border:4px solid var(--card); background-size:cover; background-position:center;}
   .profile-name{font-size:24px; font-weight:900;}
   .profile-id{font-size:13px; color:var(--muted); font-family:monospace; font-weight: 600;}
@@ -116,8 +93,6 @@
   .p-stat{background:var(--card); border:1px solid var(--line); padding:18px; border-radius:20px; text-align:center;}
   .p-stat .val{font-size:20px; font-weight:900; color:var(--gold);}
   .p-stat .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; font-weight:900; margin-top:6px;}
-
-  /* НИЖНЕЕ МЕНЮ */
   .bottom-nav{display:flex; justify-content:space-between; align-items:center; padding:10px 8px; padding-bottom: calc(10px + env(safe-area-inset-bottom)); background:var(--nav-bg); border-top:1px solid var(--line);}
   .nav-item{display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--muted); font-size:10px; font-weight:900; cursor:pointer; transition:.3s; padding: 6px 8px; border-radius: 12px; flex: 1;}
   .nav-item.active{color:var(--accent); transform: translateY(-2px);}
@@ -125,8 +100,6 @@
   .nav-item .icon{display:flex; align-items:center; justify-content:center; padding: 6px; border-radius: 12px; transition: 0.3s;}
   .nav-item.active .icon { background: rgba(42,171,238,0.15); box-shadow: 0 0 15px rgba(42,171,238,0.2); }
   .nav-item .icon svg{width:22px; height:22px; transition:0.2s;}
-
-  /* МОДАЛКИ */
   .modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .3s}
   .modal.open{opacity:1;pointer-events:auto}
   .modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px)}
@@ -136,8 +109,13 @@
   .modal-header h2{font-size:16px;font-weight:900;text-transform:uppercase; display:flex; align-items:center; gap:8px;}
   .modal-close{margin-left:auto;width:34px;height:34px;border-radius:12px;background:var(--card);color:var(--txt);display:grid;place-items:center;cursor:pointer;border:1px solid var(--line);}
   .modal-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px}
-  
-  /* НАСТРОЙКИ */
+  .cat-item { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); margin-bottom: 10px; position: relative; overflow: hidden;}
+  .cat-glow { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
+  .cat-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .cat-name { font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;}
+  .cat-chance { font-size: 11px; color: var(--muted); font-weight: 800; display: flex; align-items: center; gap: 6px;}
+  .cat-price { font-family: ui-monospace, monospace; font-weight: 900; color: var(--gold); font-size: 15px; text-align: right; line-height: 1.2;}
+  .cat-price small { font-size: 10px; color: var(--muted); display: block;}
   .setting-row { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: var(--card); border-radius: 16px; border: 1px solid var(--line); margin-bottom: 8px; }
   .setting-title { font-weight: 900; font-size: 15px; }
   .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
@@ -146,12 +124,10 @@
   .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
   input:checked + .slider { background-color: var(--accent); }
   input:checked + .slider:before { transform: translateX(22px); }
-
   .toast-wrap{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:200;pointer-events:none; width: 90%; max-width: 350px;}
   .toast{padding:14px 24px;border-radius:16px;background:rgba(15,25,38,0.95);border:1px solid var(--line);font-size:14px;font-weight:900;text-align:center;animation:toastPop .3s, toastOut .3s 2s forwards; word-wrap: break-word; line-height: 1.4;}
   @keyframes toastPop{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
   @keyframes toastOut{to{opacity:0;transform:translateY(-20px)}}
-
   .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; z-index: 10; }
 </style>
 </head>
@@ -177,7 +153,6 @@
     </div>
   </div>
 
-  <!-- ГЕНЕРАТОР -->
   <div class="content active" id="tab-home">
     <div class="card" style="margin-top:10px;">
       <div class="display-wrap" id="displayWrap" onclick="copyUsername()">
@@ -200,7 +175,6 @@
     </div>
   </div>
 
-  <!-- КОШЕЛЕК -->
   <div class="content" id="tab-wallet">
     <div class="wallet-card">
       <div class="wallet-title">Ваш баланс</div>
@@ -214,7 +188,16 @@
     <div class="leaderboard" id="walletList"></div>
   </div>
 
-  <!-- ТРЕЙДЫ -->
+  <div class="content" id="tab-shop">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+        <h2 style="font-size:22px; font-weight:900;">🖼️ Магазин NFT</h2>
+    </div>
+    <p style="font-size:12px; color:var(--muted); font-weight:600; margin-bottom:10px;">Уникальные цифровые активы.</p>
+    <div class="leaderboard" id="shopList">
+      <div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>
+    </div>
+  </div>
+
   <div class="content" id="tab-trades">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
         <h2 style="font-size:22px; font-weight:900;">📬 Обмены</h2>
@@ -228,18 +211,19 @@
     </div>
   </div>
 
-  <!-- ТОПЫ -->
   <div class="content" id="tab-tops">
     <h2 style="font-size:22px; font-weight:900; margin-top:10px;">🏆 Топ игроков</h2>
     <div class="leaderboard" id="leaderboardList"></div>
   </div>
 
-  <!-- ПРОФИЛЬ -->
   <div class="content" id="tab-profile">
     <div class="profile-header">
+      <div style="position: absolute; top: 0; right: 0; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 900; color: var(--muted);">v4.0</div>
       <div class="profile-avatar" id="profAvatar">?</div>
       <div class="profile-name" id="profName">Загрузка...</div>
       <div class="profile-id" id="profId">ID: ...</div>
+      <div id="activeUsernameDisplay" style="margin-top: 10px; font-size: 18px; font-weight: 900; font-family: monospace; color: var(--accent); cursor: pointer;" onclick="openSetUsernameModal()"></div>
+      <div id="bestUsernameDisplay" style="font-size: 12px; color: var(--muted); font-weight: 800;"></div>
     </div>
     <div class="profile-stats">
       <div class="p-stat"><div class="val" id="profBalance">0.00 TON</div><div class="lbl">Баланс</div></div>
@@ -247,7 +231,6 @@
     </div>
   </div>
 
-  <!-- МЕНЮ -->
   <div class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('home', this)">
       <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"></path></svg></div>
@@ -256,6 +239,10 @@
     <div class="nav-item" onclick="switchTab('wallet', this)">
       <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></div>
       <span>Кошелек</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('shop', this)">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg></div>
+      <span>Магазин</span>
     </div>
     <div class="nav-item" onclick="switchTab('trades', this)">
       <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 6l-10 7L2 6"></path></svg></div>
@@ -268,32 +255,42 @@
   </div>
 </div>
 
-<!-- МОДАЛКА СОЗДАНИЯ ТРЕЙДА ПО ID -->
+<!-- МОДАЛКИ -->
+<div class="modal" id="catalogModal">
+  <div class="modal-backdrop" onclick="closeModal('catalogModal')"></div>
+  <div class="modal-card">
+    <div class="modal-header"><h2>📖 Каталог редкостей</h2><button class="modal-close" onclick="closeModal('catalogModal')">✕</button></div>
+    <div class="modal-body" id="catalogBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="setUsernameModal">
+  <div class="modal-backdrop" onclick="closeModal('setUsernameModal')"></div>
+  <div class="modal-card">
+    <div class="modal-header"><h2>Выбрать юз</h2><button class="modal-close" onclick="closeModal('setUsernameModal')">✕</button></div>
+    <div class="modal-body" id="setUsernameList"></div>
+  </div>
+</div>
+
 <div class="modal" id="newTradeModal">
   <div class="modal-backdrop" onclick="closeModal('newTradeModal')"></div>
   <div class="modal-card">
     <div class="modal-header"><h2>Отправить обмен</h2><button class="modal-close" onclick="closeModal('newTradeModal')">✕</button></div>
     <div class="modal-body">
       <p style="font-size:13px; color:var(--muted); font-weight:600;">Выберите юз из своего кошелька и введите Telegram ID друга.</p>
-      
       <div style="background:var(--card); padding:12px; border-radius:12px; border:1px solid var(--line);">
         <div style="font-size:11px; color:var(--muted); font-weight:800; margin-bottom:6px;">ВЫБЕРИТЕ ЮЗ:</div>
-        <select id="tradeSelectItem" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); background:#080d13; color:#fff; font-size:14px; font-weight:800; outline:none;">
-            <!-- Опции заполнятся через JS -->
-        </select>
+        <select id="tradeSelectItem" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); background:#080d13; color:#fff; font-size:14px; font-weight:800; outline:none;"></select>
       </div>
-
       <div style="background:var(--card); padding:12px; border-radius:12px; border:1px solid var(--line);">
         <div style="font-size:11px; color:var(--muted); font-weight:800; margin-bottom:6px;">ID ПОЛУЧАТЕЛЯ:</div>
         <input type="number" id="tradeReceiverId" placeholder="Например: 8314037736" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); background:#080d13; color:#fff; font-size:14px; font-weight:800; outline:none;">
       </div>
-
       <button class="btn-gen" style="margin-top:15px; font-size:16px; padding:14px;" onclick="submitNewTrade()">ОТПРАВИТЬ</button>
     </div>
   </div>
 </div>
 
-<!-- НАСТРОЙКИ -->
 <div class="modal" id="settingsModal">
   <div class="modal-backdrop" onclick="closeModal('settingsModal')"></div>
   <div class="modal-card">
@@ -307,6 +304,10 @@
         <div class="setting-title">Вибрация</div>
         <label class="switch"><input type="checkbox" id="setVibration" onchange="toggleSetting('vibration', this.checked)"><span class="slider"></span></label>
       </div>
+      <div class="setting-row">
+        <div class="setting-title">Оптимизация</div>
+        <label class="switch"><input type="checkbox" id="setLowEnd" onchange="toggleSetting('lowEnd', this.checked)"><span class="slider"></span></label>
+      </div>
     </div>
   </div>
 </div>
@@ -314,19 +315,21 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-    // 1. Инициализация
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.expand(); tg.setHeaderColor('#06090e'); tg.setBackgroundColor('#06090e'); }
     const user = tg?.initDataUnsafe?.user;
 
-    let settings = JSON.parse(localStorage.getItem('geners_settings')) || { sound: true, vibration: true };
-    document.getElementById('setSound').checked = settings.sound;
-    document.getElementById('setVibration').checked = settings.vibration;
-
-    function toggleSetting(key, val) {
-        settings[key] = val;
-        localStorage.setItem('geners_settings', JSON.stringify(settings));
+    let settings = JSON.parse(localStorage.getItem('geners_settings')) || { sound: true, vibration: true, lowEnd: false };
+    
+    function applySettings() {
+        document.getElementById('setSound').checked = settings.sound;
+        document.getElementById('setVibration').checked = settings.vibration;
+        document.getElementById('setLowEnd').checked = settings.lowEnd;
+        if (settings.lowEnd) document.body.classList.add('low-end');
+        else document.body.classList.remove('low-end');
     }
+    function toggleSetting(key, val) { settings[key] = val; localStorage.setItem('geners_settings', JSON.stringify(settings)); applySettings(); }
+    applySettings();
 
     let audioCtx;
     function playSound(type) {
@@ -341,7 +344,6 @@
     }
     function vibrate(type) { if (!settings.vibration || !tg?.HapticFeedback) return; if (type === 'light') tg.HapticFeedback.impactOccurred('light'); if (type === 'success') tg.HapticFeedback.notificationOccurred('success'); if(type === 'error') tg.HapticFeedback.notificationOccurred('error'); }
 
-    // 2. База Данных
     let supabaseClient = null;
     try {
         if (typeof supabase !== 'undefined') {
@@ -352,14 +354,13 @@
         }
     } catch(e) { console.log("Ошибка подключения:", e); }
 
-    // 3. Переменные
     let myId = user ? user.id : 0;
     let myName = user ? user.first_name : 'Игрок';
     let myPhoto = user ? user.photo_url : null;
     let currentUsername = ''; 
 
-    let gameData = { balance: 5.00, total: 0, inventory: [] };
-    function loadData() { try { const s = localStorage.getItem('geners_data'); if(s) { const p = JSON.parse(s); gameData.balance = p.balance !== undefined ? parseFloat(p.balance) : 5.00; gameData.total = p.total !== undefined ? parseInt(p.total) : 0; gameData.inventory = Array.isArray(p.inventory) ? p.inventory : []; } } catch(e){} }
+    let gameData = { balance: 5.00, total: 0, inventory: [], activeUsernameId: null, bestUsernameId: null };
+    function loadData() { try { const s = localStorage.getItem('geners_data'); if(s) { const p = JSON.parse(s); gameData.balance = p.balance !== undefined ? parseFloat(p.balance) : 5.00; gameData.total = p.total !== undefined ? parseInt(p.total) : 0; gameData.inventory = Array.isArray(p.inventory) ? p.inventory : []; gameData.activeUsernameId = p.activeUsernameId || null; gameData.bestUsernameId = p.bestUsernameId || null; } } catch(e){} }
     function saveData() { try { localStorage.setItem('geners_data', JSON.stringify(gameData)); if(tg?.CloudStorage) { tg.CloudStorage.setItem('geners_balance', gameData.balance.toString(), ()=>{}); tg.CloudStorage.setItem('geners_total', gameData.total.toString(), ()=>{}); } } catch(e){} }
 
     if (user) {
@@ -376,13 +377,33 @@
         }
     }
 
-    // 4. UI
     function updateUI() {
         document.getElementById('balance').textContent = gameData.balance.toFixed(2);
         document.getElementById('profBalance').textContent = gameData.balance.toFixed(2) + ' TON';
         document.getElementById('profTotal').textContent = gameData.total;
         document.getElementById('walletBalance').textContent = gameData.balance.toFixed(2);
         document.getElementById('walletTotal').textContent = gameData.inventory.length;
+        
+        // Обновляем профиль
+        let activeItem = gameData.inventory.find(i => i.id == gameData.activeUsernameId);
+        if (!activeItem && gameData.inventory.length > 0) activeItem = gameData.inventory[0]; // Если не выбран, берем первый
+
+        if (activeItem) {
+            document.getElementById('activeUsernameDisplay').textContent = '@' + activeItem.username;
+            document.getElementById('activeUsernameDisplay').style.color = activeItem.rarity_color;
+        } else {
+            document.getElementById('activeUsernameDisplay').textContent = 'Установить юз';
+            document.getElementById('activeUsernameDisplay').style.color = 'var(--muted)';
+        }
+
+        let bestItem = gameData.inventory.reduce((max, item) => (item.price > (max?.price || 0) ? item : max), null);
+        if (bestItem) {
+            document.getElementById('bestUsernameDisplay').textContent = `🏆 Лучший юз: @${bestItem.username} (${parseFloat(bestItem.price).toFixed(2)} TON)`;
+            document.getElementById('bestUsernameDisplay').style.color = bestItem.rarity_color;
+        } else {
+            document.getElementById('bestUsernameDisplay').textContent = '';
+        }
+
         saveData();
     }
 
@@ -391,18 +412,25 @@
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById('tab-' + tabId).classList.add('active');
         if(el) el.classList.add('active');
-        
         if (tabId === 'tops') loadLeaderboard();
         if (tabId === 'wallet') loadWallet();
+        if (tabId === 'shop') loadShop();
         if (tabId === 'trades') loadTrades();
         vibrate('light');
     }
 
     function openModal(id) { document.getElementById(id).classList.add('open'); vibrate('light'); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-    function showToast(text, color) { const el = document.createElement('div'); el.className = 'toast'; el.style.color = color; el.textContent = text; document.getElementById('toastWrap').appendChild(el); setTimeout(()=>el.remove(), 2300); }
+    
+    function showToast(text, color) { 
+        const wrap = document.getElementById('toastWrap');
+        wrap.innerHTML = ''; 
+        const el = document.createElement('div'); 
+        el.className = 'toast'; el.style.color = color; el.textContent = text; 
+        wrap.appendChild(el); 
+        setTimeout(()=>el.remove(), 3000); 
+    }
 
-    // 5. Синхронизация
     async function syncUser() {
         loadData(); updateUI();
         if (!supabaseClient || !myId) return;
@@ -410,27 +438,39 @@
             let { data, error } = await supabaseClient.from('users').select('*').eq('id', myId).single();
             if (error && error.code !== 'PGRST116') throw error; 
             if (!data) {
-                await supabaseClient.from('users').insert([{ id: myId, first_name: myName, photo_url: myPhoto, balance: gameData.balance, total_generated: gameData.total }]);
+                await supabaseClient.from('users').insert([{ id: myId, first_name: myName, photo_url: myPhoto, balance: gameData.balance, total_generated: gameData.total, active_username_id: null, best_username_id: null }]);
             } else {
                 if (parseFloat(data.balance) > gameData.balance) { gameData.balance = parseFloat(data.balance); gameData.total = data.total_generated; saveData(); }
                 else if (gameData.balance > parseFloat(data.balance)) { await supabaseClient.from('users').update({ balance: gameData.balance, total_generated: gameData.total }).eq('id', myId); }
+                gameData.activeUsernameId = data.active_username_id;
+                gameData.bestUsernameId = data.best_username_id;
             }
         } catch(e) { console.log("DB Error:", e); }
         updateUI();
     }
 
-    // 6. Генерация
+    // --- REALTIME ---
+    function subscribeToRealtime() {
+        if (!supabaseClient || !myId) return;
+        supabaseClient.channel('trades-channel')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'trades', filter: `receiver_id=eq.${myId}` }, 
+            (payload) => { showToast('📬 Вам отправили новый юз!', '#3ddc84'); loadTrades(); }).subscribe();
+        supabaseClient.channel('users-channel')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'users', filter: `id=eq.${myId}` }, 
+            (payload) => { if (payload.new.balance > gameData.balance) { gameData.balance = parseFloat(payload.new.balance); updateUI(); showToast('Баланс обновлен!', '#ffcf4d'); } }).subscribe();
+    }
+
     const RARITIES = [
-      {id:'common', name:'Обычный', color:'#8b95a5', weight:4000, base:0.05, maxBase:0.15, penalty:0, chance: "40%"},
-      {id:'uncommon', name:'Необычный', color:'#3ddc84', weight:2500, base:0.25, maxBase:0.8, penalty:4, chance: "25%"},
-      {id:'rare', name:'Редкий', color:'#3b9eff', weight:1500, base:1.2, maxBase:5, penalty:10, chance: "15%"},
-      {id:'epic', name:'Эпический', color:'#b06dff', weight:1000, base:6, maxBase:25, penalty:22, chance: "10%"},
-      {id:'legendary', name:'Легендарный', color:'#ffb020', weight:600, base:35, maxBase:120, penalty:38, chance: "6%"},
-      {id:'mythic', name:'Мифический', color:'#ff3b6b', weight:250, base:200, maxBase:600, penalty:55, chance: "2.5%"},
-      {id:'crystal', name:'Кристальная', color:'#00ffff', weight:100, base:1500, maxBase:1500, penalty:65, chance: "1%"},
-      {id:'divine', name:'Божественная',color:'#fff7a1', weight:40, base:500, maxBase:2500, penalty:75, chance: "0.4%"},
-      {id:'absolute', name:'Абсолютная', color:'#ff00ff', weight:9, base:1000, maxBase:5000, penalty:85, chance: "0.09%"},
-      {id:'anon', name:'Анонимный', color:'#39ff14', weight:1, base:0.001, maxBase:12000, penalty:95, chance: "0.01%"},
+      {id:'common', name:'Обычный', color:'#8b95a5', weight:4000, base:0.05, maxBase:0.5, penalty:0, chance: "40%"},
+      {id:'uncommon', name:'Необычный', color:'#3ddc84', weight:2500, base:0.5, maxBase:2, penalty:4, chance: "25%"},
+      {id:'rare', name:'Редкий', color:'#3b9eff', weight:1500, base:2, maxBase:10, penalty:10, chance: "15%"},
+      {id:'epic', name:'Эпический', color:'#b06dff', weight:1000, base:10, maxBase:50, penalty:22, chance: "10%"},
+      {id:'legendary', name:'Легендарный', color:'#ffb020', weight:600, base:50, maxBase:200, penalty:38, chance: "6%"},
+      {id:'mythic', name:'Мифический', color:'#ff3b6b', weight:250, base:200, maxBase:1000, penalty:55, chance: "2.5%"},
+      {id:'crystal', name:'Кристальная', color:'#00ffff', weight:100, base:1000, maxBase:5000, penalty:65, chance: "1%"},
+      {id:'divine', name:'Божественная',color:'#fff7a1', weight:40, base:5000, maxBase:15000, penalty:75, chance: "0.4%"},
+      {id:'absolute', name:'Абсолютная', color:'#ff00ff', weight:9, base:15000, maxBase:50000, penalty:85, chance: "0.09%"},
+      {id:'anon', name:'Анонимный', color:'#39ff14', weight:1, base:50000, maxBase:200000,penalty:95, chance: "0.01%"},
     ];
     const PREFIX = ['user','pro','mega','neo','dark','light','king','queen','tech','cyber','pixel','ghost','shadow','storm','fire','ice','wolf','cat','ninja','star','moon','sun','red','blue','gold','silver','iron','fast','cold','hot','lucky','crazy','super','ultra','hyper','max','top','best','real','true','wild','free','young','big','black','white','void','echo','alpha','omega','degen','crypto','nft'];
     const BASES = ['user','player','hunter','master','god','boss','gamer','coder','dev','trader','wolf','fox','hawk','dragon','tiger','lion','bear','shark','viper','phoenix','knight','wizard','rider','walker','killer','slayer','lord','chief','ace','ghost','ninja','sniper','pilot','racer','king','man'];
@@ -475,7 +515,6 @@
       } catch(e) {} finally { genBtn.disabled = false; }
     }
 
-    // 7. Кошелек
     async function loadWallet() {
         const list = document.getElementById('walletList'); list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>';
         let data = [...gameData.inventory];
@@ -508,25 +547,96 @@
         if (supabaseClient && myId) supabaseClient.from('users').update({ balance: gameData.balance }).eq('id', myId);
     }
 
-    // 8. ТРЕЙДЫ
+    // --- МАГАЗИН NFT ---
+    async function loadShop() {
+        const list = document.getElementById('shopList'); list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>';
+        if (!supabaseClient) return;
+        try {
+            const { data, error } = await supabaseClient.from('nfts').select('*');
+            if (error) throw error;
+            if (!data || data.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Магазин пуст</div>'; return; }
+
+            list.innerHTML = data.map(item => `
+                <div class="mc-item" style="border-left-color:${item.rarity_color}; padding: 16px;">
+                    <div style="display:flex; align-items:center; gap:12px; width:100%;">
+                        <img src="${item.image_url}" style="width:50px; height:50px; border-radius:12px; object-fit:cover; background:#222;" alt="${item.name}">
+                        <div style="flex:1;">
+                            <div style="font-weight:900; font-size:15px; color:${item.rarity_color}">${item.name}</div>
+                            <div style="font-size:12px; color:var(--gold); font-weight:900; margin-top:2px;">${parseFloat(item.price).toFixed(2)} TON</div>
+                        </div>
+                        <button class="btn-gen" style="width:auto; padding:8px 16px; font-size:14px; border-radius:12px;" onclick="buyNFT(${item.id}, ${item.price}, '${item.name}')">Купить</button>
+                    </div>
+                </div>`).join('');
+        } catch(e) { list.innerHTML = '<div style="text-align:center;color:#ff3b6b;padding:20px; font-weight:800;">Ошибка загрузки</div>'; }
+    }
+
+    async function buyNFT(id, price, name) {
+        if (gameData.balance < price) { showToast('Недостаточно средств', '#ff3b6b'); return; }
+        vibrate('light');
+        gameData.balance -= price;
+        const newItem = { id: 'nft_' + Date.now(), username: name + '_NFT', rarity_name: 'NFT', rarity_color: '#b06dff', price: price };
+        gameData.inventory.push(newItem);
+        saveData(); updateUI();
+        showToast(`Вы купили ${name}!`, '#3ddc84');
+        if (supabaseClient && myId) {
+            await supabaseClient.from('users').update({ balance: gameData.balance }).eq('id', myId);
+            await supabaseClient.from('usernames').insert([{ user_id: myId, username: newItem.username, rarity_name: 'NFT', rarity_color: '#b06dff', price: price }]);
+        }
+        loadShop(); // Обновить, если нужно
+    }
+
+    // --- ПРОФИЛЬ ---
+    function openSetUsernameModal() {
+        const list = document.getElementById('setUsernameList');
+        list.innerHTML = '';
+        
+        if (gameData.inventory.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted);">У вас нет юзов</div>';
+            openModal('setUsernameModal');
+            return;
+        }
+
+        gameData.inventory.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'mc-item';
+            div.style.borderLeftColor = item.rarity_color;
+            div.innerHTML = `
+                <div style="flex:1;">
+                    <div style="font-weight:900; color:${item.rarity_color}; font-family:monospace;">@${item.username}</div>
+                    <div style="font-size:11px; color:var(--gold);">${parseFloat(item.price).toFixed(2)} TON</div>
+                </div>
+                <button class="btn-action" style="background:var(--accent); color:#03121c; width:auto; padding:0 12px; font-size:12px;" onclick="setActiveUsername('${item.id}')">Выбрать</button>
+            `;
+            list.appendChild(div);
+        });
+        openModal('setUsernameModal');
+    }
+
+    async function setActiveUsername(id) {
+        gameData.activeUsernameId = id;
+        updateUI();
+        closeModal('setUsernameModal');
+        showToast('Юз установлен в профиль!', '#3ddc84');
+        if (supabaseClient && myId) {
+            await supabaseClient.from('users').update({ active_username_id: id }).eq('id', myId);
+        }
+    }
+
+    // --- ТРЕЙДЫ ---
     async function openNewTradeModal() {
         const select = document.getElementById('tradeSelectItem');
         select.innerHTML = '';
-        
         let data = [...gameData.inventory];
         if (supabaseClient && myId) {
             try { const res = await supabaseClient.from('usernames').select('id, username, price').eq('user_id', myId); if(res.data) data = [...data, ...res.data]; } catch(e){}
         }
-        
         if(data.length === 0) { showToast('У вас нет юзов для обмена', '#ff3b6b'); return; }
-
         data.forEach(item => {
             const opt = document.createElement('option');
             opt.value = item.id;
             opt.textContent = `@${item.username} (${parseFloat(item.price).toFixed(2)} T)`;
             select.appendChild(opt);
         });
-
         document.getElementById('tradeReceiverId').value = '';
         openModal('newTradeModal');
     }
@@ -534,7 +644,6 @@
     async function submitNewTrade() {
         const itemId = document.getElementById('tradeSelectItem').value;
         const receiverIdStr = document.getElementById('tradeReceiverId').value.trim();
-        
         if (!itemId) { showToast('Выберите юз', '#ff3b6b'); return; }
         if (!receiverIdStr || isNaN(receiverIdStr)) { showToast('Введите корректный ID', '#ff3b6b'); return; }
         const receiverId = parseInt(receiverIdStr);
@@ -543,34 +652,31 @@
 
         try {
             const btn = document.querySelector('#newTradeModal button');
-            btn.disabled = true; btn.textContent = 'ОТПРАВКА...';
+            btn.disabled = true; btn.textContent = 'ПРОВЕРКА...';
+            let { data: u, error: findError } = await supabaseClient.from('users').select('id').eq('id', receiverId);
+            if (findError || !u || u.length === 0) { 
+                showToast('Игрок с ID ' + receiverId + ' не найден', '#ff3b6b'); 
+                btn.disabled = false; btn.textContent = 'ОТПРАВИТЬ'; return; 
+            }
+            btn.textContent = 'ОТПРАВКА...';
 
-            let { data: u } = await supabaseClient.from('users').select('id').eq('id', receiverId).single();
-            if (!u) { showToast('Игрок с таким ID не найден', '#ff3b6b'); btn.disabled = false; btn.textContent = 'ОТПРАВИТЬ'; return; }
-
-            if (itemId.toString().startsWith('local_')) {
+            if (itemId.toString().startsWith('local_') || itemId.toString().startsWith('nft_')) {
                 const invItem = gameData.inventory.find(i => i.id === itemId);
-                const { data: newDbItem, error } = await supabaseClient.from('usernames').insert([{ 
+                const { data: newDbItem, error: insertErr } = await supabaseClient.from('usernames').insert([{ 
                     user_id: myId, username: invItem.username, rarity_name: invItem.rarity_name, rarity_color: invItem.rarity_color, price: invItem.price 
                 }]).select().single();
-                
-                if (error) throw error;
+                if (insertErr) throw insertErr;
                 await supabaseClient.from('trades').insert([{ sender_id: myId, receiver_id: receiverId, item_id: newDbItem.id }]);
                 gameData.inventory = gameData.inventory.filter(i => i.id !== itemId);
                 saveData();
             } else {
                 await supabaseClient.from('trades').insert([{ sender_id: myId, receiver_id: receiverId, item_id: parseInt(itemId) }]);
             }
-
             showToast('Заявка отправлена!', '#3ddc84');
             closeModal('newTradeModal');
             loadWallet();
-        } catch(e) { 
-            console.error(e);
-            showToast('Ошибка отправки', '#ff3b6b'); 
-        } finally { 
-            const btn = document.querySelector('#newTradeModal button'); btn.disabled = false; btn.textContent = 'ОТПРАВИТЬ'; 
-        }
+        } catch(e) { showToast('Ошибка отправки', '#ff3b6b'); } 
+        finally { const btn = document.querySelector('#newTradeModal button'); btn.disabled = false; btn.textContent = 'ОТПРАВИТЬ'; }
     }
 
     function quickTrade(id, username) {
@@ -586,39 +692,20 @@
     async function loadTrades() {
         const list = document.getElementById('tradesList'); list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка...</div>';
         if (!supabaseClient || !myId) return;
-
         try {
-            // Загружаем заявки
-            const { data: trades, error } = await supabaseClient.from('trades')
-                .select('id, sender_id, item_id')
-                .eq('receiver_id', myId).eq('status', 'pending');
-
+            const { data: trades, error } = await supabaseClient.from('trades').select('id, sender_id, item_id').eq('receiver_id', myId).eq('status', 'pending');
             if (error) throw error;
             if (!trades || trades.length === 0) { list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Нет новых обменов</div>'; return; }
-
             let html = '';
-
-            // Проходимся по каждой заявке ОТДЕЛЬНО (чтобы ошибка в одной не ломала всё)
             for (let t of trades) {
                 let senderName = 'Игрок';
-                try {
-                    const { data: senderData } = await supabaseClient.from('users').select('first_name').eq('id', t.sender_id).single();
-                    if (senderData) senderName = senderData.first_name;
-                } catch(e) {}
-
+                try { const { data: senderData } = await supabaseClient.from('users').select('first_name').eq('id', t.sender_id).single(); if (senderData) senderName = senderData.first_name; } catch(e) {}
                 let item = null;
-                try {
-                    const { data: itemData } = await supabaseClient.from('usernames').select('username, rarity_color, price').eq('id', t.item_id).single();
-                    if (itemData) item = itemData;
-                } catch(e) {}
-
-                if (!item) continue; // Если юз удален, пропускаем
-
+                try { const { data: itemData } = await supabaseClient.from('usernames').select('username, rarity_color, price').eq('id', t.item_id).single(); if (itemData) item = itemData; } catch(e) {}
+                if (!item) continue; 
                 html += `
                 <div class="trade-item">
-                    <div class="trade-header">
-                        <span>От: <b>${senderName}</b> (ID: ${t.sender_id})</span>
-                    </div>
+                    <div class="trade-header"><span>От: <b>${senderName}</b> (ID: ${t.sender_id})</span></div>
                     <div class="trade-body">
                         <div style="font-family:monospace; font-size:16px; font-weight:900; color:${item.rarity_color}">@${item.username}</div>
                         <div style="font-size:14px; font-weight:900; color:var(--gold)">${parseFloat(item.price).toFixed(2)} TON</div>
@@ -629,15 +716,9 @@
                     </div>
                 </div>`;
             }
-
             if(html === '') list.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px; font-weight:800;">Нет новых обменов</div>';
             else list.innerHTML = html;
-
-        } catch(e) { 
-            console.error("Trade Load Error:", e);
-            // ПОКАЗЫВАЕМ ТОЧНУЮ ОШИБКУ, ЕСЛИ ЧТО-ТО СЛОМАЛОСЬ
-            list.innerHTML = `<div style="text-align:center;color:#ff3b6b;padding:20px; font-weight:800;">Ошибка: ${e.message || 'Неизвестная ошибка'}</div>`; 
-        }
+        } catch(e) { list.innerHTML = `<div style="text-align:center;color:#ff3b6b;padding:20px; font-weight:800;">Ошибка: ${e.message || 'Неизвестная'}</div>`; }
     }
 
     async function processTrade(tradeId, itemId, status) {
@@ -646,15 +727,13 @@
             if (status === 'accepted') {
                 await supabaseClient.from('usernames').update({ user_id: myId }).eq('id', itemId);
                 showToast('Вы приняли юз!', '#3ddc84');
-            } else {
-                showToast('Заявка отклонена', '#8b9bad');
-            }
+            } else { showToast('Заявка отклонена', '#8b9bad'); }
             await supabaseClient.from('trades').update({ status: status }).eq('id', tradeId);
             loadTrades();
         } catch(e) { showToast('Ошибка', '#ff3b6b'); }
     }
 
-    // 9. Топы
+    // --- ТОПЫ ---
     async function loadLeaderboard() {
         const list = document.getElementById('leaderboardList'); list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Загрузка топов...</div>';
         if (!supabaseClient) { list.innerHTML = '<div style="text-align:center; padding:20px; color:#ff3b6b; font-weight:800;">Нет связи с сервером</div>'; return; }
@@ -662,12 +741,7 @@
             const res = await supabaseClient.from('users').select('*').order('balance', {ascending: false}).limit(50);
             if (res.error) throw res.error;
             const data = res.data || [];
-            
-            if (data.length === 0) { 
-                list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Пока нет игроков</div>'; 
-                return; 
-            }
-            
+            if (data.length === 0) { list.innerHTML = '<div style="text-align:center; padding:20px; color:var(--muted); font-weight:800;">Пока нет игроков</div>'; return; }
             list.innerHTML = data.map((u, i) => {
                 const initial = u.first_name ? u.first_name[0].toUpperCase() : '?';
                 const avatarStyle = u.photo_url ? `background-image:url(${u.photo_url})` : `background:linear-gradient(135deg,#2aabee,#b06dff)`;
@@ -679,14 +753,25 @@
                     <div class="lb-bal">${parseFloat(u.balance || 0).toFixed(1)} TON</div>
                 </div>`;
             }).join('');
-        } catch(e) { 
-            list.innerHTML = '<div style="text-align:center; padding:20px; color:#ff3b6b; font-weight:800;">Ошибка загрузки</div>'; 
-        }
+        } catch(e) { list.innerHTML = '<div style="text-align:center; padding:20px; color:#ff3b6b; font-weight:800;">Ошибка загрузки</div>'; }
     }
 
-    // Старт
+    function renderCatalog() {
+        document.getElementById('catalogBody').innerHTML = RARITIES.map(r => `
+            <div class="cat-item">
+                <div class="cat-glow" style="background:${r.color}; box-shadow: 0 0 15px ${r.color};"></div>
+                <div class="cat-info">
+                    <div class="cat-name" style="color:${r.color}">${r.name}</div>
+                    <div class="cat-chance">Шанс: ${r.chance}</div>
+                </div>
+                <div class="cat-price">${r.base} - ${r.maxBase} <small>TON</small></div>
+            </div>`).join('');
+    }
+    renderCatalog();
+
     document.getElementById('genBtn').addEventListener('click', generate);
     syncUser();
+    subscribeToRealtime();
 </script>
 </body>
 </html>
